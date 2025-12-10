@@ -39,7 +39,7 @@ export async function strapiFetch<T>(
 
   // Add API token for server-side requests
   if (STRAPI_API_TOKEN) {
-    headers['Authorization'] = `Bearer ${STRAPI_API_TOKEN}`;
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${STRAPI_API_TOKEN}`;
   }
 
   try {
