@@ -29,19 +29,21 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 strapi
 
+# Create directories first
+RUN mkdir -p /app/public/uploads && mkdir -p /app/.tmp
+
 # Copy necessary files
 COPY --from=builder --chown=strapi:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=strapi:nodejs /app/build ./build
 COPY --from=builder --chown=strapi:nodejs /app/config ./config
 COPY --from=builder --chown=strapi:nodejs /app/database ./database
-COPY --from=builder --chown=strapi:nodejs /app/public ./public
 COPY --from=builder --chown=strapi:nodejs /app/src ./src
 COPY --from=builder --chown=strapi:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=strapi:nodejs /app/.strapi ./.strapi
 
-# Create uploads directory
-RUN mkdir -p /app/public/uploads && chown -R strapi:nodejs /app/public/uploads
-RUN mkdir -p /app/.tmp && chown -R strapi:nodejs /app/.tmp
+# Public directory is created above, Strapi will populate it at runtime
+# Set ownership
+RUN chown -R strapi:nodejs /app/public /app/.tmp
 
 USER strapi
 
