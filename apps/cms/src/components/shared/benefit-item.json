@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_benefit_item",
+  "info": {
+    "displayName": "Benefit Item",
+    "description": "Key benefit item for services"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}
+

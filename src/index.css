@@ -1,0 +1,298 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* District Interiors Brand Fonts */
+@font-face {
+  font-family: 'Kalice';
+  src: url('/fonts/Kalice-Regular.woff2') format('woff2'),
+       url('/fonts/Kalice-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Santana';
+  src: url('/fonts/Santana.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Santana';
+  src: url('/fonts/Santana-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    /* District Interiors Brand Colors */
+    --night-green: 155 22% 16%;
+    --slate-moss: 155 10% 32%;
+    --stone: 60 3% 78%;
+    --ivory: 60 30% 98%;
+    
+    /* Pastel Accents */
+    --pear: 72 46% 83%;
+    --lavender: 270 33% 66%;
+    --mauve: 280 33% 79%;
+    --blush: 20 18% 88%;
+    
+    /* Semantic Tokens */
+    --background: var(--ivory);
+    --foreground: var(--night-green);
+    
+    --card: var(--ivory);
+    --card-foreground: var(--night-green);
+    
+    --popover: var(--ivory);
+    --popover-foreground: var(--night-green);
+    
+    --primary: var(--night-green);
+    --primary-foreground: var(--ivory);
+    
+    --secondary: var(--stone);
+    --secondary-foreground: var(--night-green);
+    
+    --muted: var(--stone);
+    --muted-foreground: var(--slate-moss);
+    
+    --accent: var(--pear);
+    --accent-foreground: var(--night-green);
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: var(--ivory);
+    
+    --border: var(--stone);
+    --input: var(--stone);
+    --ring: var(--night-green);
+    
+    --radius: 0.25rem;
+    
+    /* Sidebar */
+    --sidebar-background: var(--ivory);
+    --sidebar-foreground: var(--night-green);
+    --sidebar-primary: var(--night-green);
+    --sidebar-primary-foreground: var(--ivory);
+    --sidebar-accent: var(--pear);
+    --sidebar-accent-foreground: var(--night-green);
+    --sidebar-border: var(--stone);
+    --sidebar-ring: var(--night-green);
+  }
+
+  .dark {
+    --background: var(--night-green);
+    --foreground: var(--ivory);
+    --card: var(--night-green);
+    --card-foreground: var(--ivory);
+    --popover: var(--night-green);
+    --popover-foreground: var(--ivory);
+    --primary: var(--ivory);
+    --primary-foreground: var(--night-green);
+    --secondary: var(--slate-moss);
+    --secondary-foreground: var(--ivory);
+    --muted: var(--slate-moss);
+    --muted-foreground: var(--stone);
+    --accent: var(--pear);
+    --accent-foreground: var(--night-green);
+    --border: var(--slate-moss);
+    --input: var(--slate-moss);
+    --ring: var(--ivory);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  h1 {
+    @apply text-5xl md:text-6xl lg:text-7xl xl:text-8xl uppercase tracking-tight leading-none;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl tracking-tight leading-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl leading-tight;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl leading-tight;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply py-20 md:py-28 lg:py-36 px-6 md:px-12 lg:px-20;
+  }
+
+  .container-luxury {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .text-body-large {
+    @apply text-lg md:text-xl lg:text-[22px] leading-relaxed;
+  }
+
+  .text-body {
+    @apply text-base md:text-lg leading-relaxed;
+  }
+
+  .text-caption {
+    @apply text-sm leading-relaxed;
+  }
+
+  /* Pattern Overlay */
+  .pattern-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fafaf7' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Animations */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes count-up {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes slow-zoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  .animate-slide-left {
+    animation: slide-in-left 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slide-right {
+    animation: slide-in-right 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  .animate-slow-zoom {
+    animation: slow-zoom 20s ease-in-out infinite alternate;
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+  .animate-delay-600 { animation-delay: 600ms; }
+  .animate-delay-700 { animation-delay: 700ms; }
+
+  /* Luxury Hover Effects */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-2 shadow-2xl;
+  }
+
+  .card-luxury {
+    @apply bg-card rounded-sm overflow-hidden transition-all duration-500 ease-out;
+  }
+
+  .card-luxury:hover {
+    @apply -translate-y-1 shadow-xl;
+  }
+
+  .card-luxury:hover .card-image {
+    @apply scale-105;
+  }
+
+  .card-image {
+    @apply transition-transform duration-700 ease-out;
+  }
+
+  /* Text Gradient */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-night-green via-slate-moss to-night-green;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

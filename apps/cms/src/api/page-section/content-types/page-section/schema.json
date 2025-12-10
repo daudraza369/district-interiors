@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "page_sections",
+  "info": {
+    "singularName": "page-section",
+    "pluralName": "page-sections",
+    "displayName": "Page Section",
+    "description": "Dynamic page section content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "page": {
+      "type": "enumeration",
+      "enum": [
+        "home",
+        "about",
+        "services",
+        "projects",
+        "collection",
+        "contact",
+        "tree-solutions"
+      ],
+      "required": true
+    },
+    "sectionKey": {
+      "type": "string",
+      "required": true
+    },
+    "sectionName": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "json"
+    },
+    "displayOrder": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
+

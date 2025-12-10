@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_process_step",
+  "info": {
+    "displayName": "Process Step",
+    "description": "Process step for services"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}
+

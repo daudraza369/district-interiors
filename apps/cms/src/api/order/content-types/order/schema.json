@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order",
+    "description": "Customer orders"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": ["created", "paid", "fulfilled", "canceled", "refunded"],
+      "default": "created",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "items": {
+      "type": "json",
+      "required": true
+    },
+    "subtotal": {
+      "type": "decimal",
+      "required": true
+    },
+    "discountCode": {
+      "type": "string"
+    },
+    "discountAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "shippingOption": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::shipping-option.shipping-option"
+    },
+    "shippingAmount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "total": {
+      "type": "decimal",
+      "required": true
+    },
+    "stripeSessionId": {
+      "type": "string",
+      "unique": true
+    },
+    "stripePaymentIntentId": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}
+
