@@ -148,7 +148,55 @@ In Strapi admin panel, manually create:
 
 ## Running Both Apps
 
-### Option 1: Separate Terminals
+### Option 1: Docker Compose (Recommended for Production-like Environment)
+
+This runs PostgreSQL, Strapi, and Next.js in containers, matching production setup.
+
+**Prerequisites:**
+- Docker and Docker Compose installed
+
+**Steps:**
+
+1. **Create `.env` file in project root:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit `.env` and set:**
+   - `POSTGRES_PASSWORD` - Your database password
+   - Generate Strapi secrets (run `node scripts/generate-strapi-keys.js`)
+   - Set `NEXT_PUBLIC_STRAPI_URL=http://localhost:1337` for local dev
+   - Set `CORS_ORIGIN=http://localhost:3000`
+
+3. **Start all services:**
+   ```bash
+   docker compose up --build
+   ```
+
+4. **Access services:**
+   - **Next.js:** http://localhost:3000
+   - **Strapi Admin:** http://localhost:1337/admin
+   - **PostgreSQL:** Internal only (port 5432)
+
+5. **First-time Strapi setup:**
+   - Create admin account at http://localhost:1337/admin
+   - Create API token in Strapi admin
+   - Add `STRAPI_API_TOKEN` to `.env` and restart: `docker compose restart web`
+
+6. **Stop services:**
+   ```bash
+   docker compose down
+   ```
+
+7. **View logs:**
+   ```bash
+   docker compose logs -f [service_name]
+   # Example: docker compose logs -f web
+   ```
+
+**Note:** For local development without Docker, use Option 2 or 3 below.
+
+### Option 2: Separate Terminals
 
 Terminal 1 (Strapi):
 ```bash
@@ -162,7 +210,7 @@ cd apps/web
 npm run dev
 ```
 
-### Option 2: Using a Process Manager
+### Option 3: Using a Process Manager
 
 Install `concurrently`:
 
