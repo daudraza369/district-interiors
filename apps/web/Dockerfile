@@ -19,8 +19,14 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+# Build-time env vars (passed from docker-compose)
+ARG NEXT_PUBLIC_STRAPI_URL=http://cms:1337
+ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
+ENV NEXT_PUBLIC_STRAPI_URL=${NEXT_PUBLIC_STRAPI_URL}
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+
 # Build Next.js with standalone output
-RUN npm run build
+RUN npm run build || (echo "Build failed, checking logs..." && cat .next/trace 2>/dev/null || true && exit 1)
 
 # Production image, copy all the files and run next
 FROM base AS runner
