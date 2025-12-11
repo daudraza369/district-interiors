@@ -49,6 +49,12 @@
     "displayOrder": {
       "type": "integer",
       "default": 0
+    },
+    "projects": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::project.project",
+      "mappedBy": "servicesUsed"
     }
   }
 }
