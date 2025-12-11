@@ -4,11 +4,8 @@
  */
 
 export default async ({ strapi }) => {
-  // Only run in development
-  if (process.env.NODE_ENV === 'production') {
-    return;
-  }
-
+  // Run in both development and production
+  // Skip if this is the first run (no database connection yet)
   try {
     console.log('🔧 Setting up permissions...');
 
