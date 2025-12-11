@@ -33,7 +33,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 strapi
 
 # Create directories first
-RUN mkdir -p /app/public/uploads && mkdir -p /app/.tmp
+RUN mkdir -p /app/public/uploads && mkdir -p /app/.tmp && mkdir -p /app/database
 
 # Copy necessary files
 COPY --from=builder --chown=strapi:nodejs /app/node_modules ./node_modules
@@ -43,9 +43,8 @@ COPY --from=builder --chown=strapi:nodejs /app/src ./src
 COPY --from=builder --chown=strapi:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=strapi:nodejs /app/.strapi ./.strapi
 
-# Public directory is created above, Strapi will populate it at runtime
-# Set ownership
-RUN chown -R strapi:nodejs /app/public /app/.tmp
+# Set ownership for all directories Strapi needs to write to
+RUN chown -R strapi:nodejs /app/public /app/.tmp /app/database
 
 USER strapi
 
