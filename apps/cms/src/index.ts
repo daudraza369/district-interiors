@@ -18,7 +18,13 @@ export default {
    */
   async bootstrap({ strapi }) {
     // Set up permissions automatically
-    await bootstrapPermissions({ strapi });
+    // Wrap in try-catch to ensure Strapi starts even if bootstrap fails
+    try {
+      await bootstrapPermissions({ strapi });
+    } catch (error) {
+      console.error('❌ Bootstrap error (non-fatal):', error);
+      // Don't throw - allow Strapi to continue starting
+    }
   },
 };
 

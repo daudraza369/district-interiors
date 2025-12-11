@@ -117,7 +117,9 @@ export default async ({ strapi }) => {
     console.log('✅ Permissions setup complete!');
   } catch (error) {
     console.error('❌ Error setting up permissions:', error);
+    console.error('⚠️  Continuing Strapi startup despite permission setup error...');
     // Don't throw - let Strapi start even if permissions setup fails
+    // This is critical for production deployments
   }
 };
 
