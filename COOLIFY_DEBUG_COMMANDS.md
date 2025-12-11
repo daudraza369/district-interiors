@@ -1,74 +1,80 @@
-# Coolify Terminal Debug Commands
+# Coolify Debug Guide
 
-Run these commands in Coolify's Terminal to diagnose CMS container issues:
+## ⚠️ IMPORTANT: Docker commands don't work in Coolify Terminal
+Coolify's terminal doesn't have direct Docker access. Use the UI instead.
 
-## 1. Check Container Status
+## ✅ How to Check CMS Logs in Coolify UI
+
+### Method 1: Via Logs Tab (Easiest - RECOMMENDED)
+1. Go to your deployment in Coolify
+2. Click on **"Logs"** tab (at the top, next to Configuration, Deployments, etc.)
+3. You'll see a dropdown to select which container's logs to view
+4. Select **"cms"** or **"cms-jggwgwcw4w4gkkkwocokcog8-..."** from the dropdown
+5. You'll see real-time logs with all errors
+
+### Method 2: Via Deployment Logs
+1. Go to your deployment
+2. Click **"Deployments"** tab
+3. Click on the latest deployment
+4. Scroll down to see container logs
+
+### Method 3: If you have SSH access to the Coolify server
+If you can SSH into the Coolify server itself (not the terminal in UI), then you can use:
 ```bash
+# SSH into your Coolify server first, then:
 docker ps -a | grep cms
+docker logs <cms-container-name> --tail 100
 ```
 
-## 2. View CMS Container Logs (Most Important!)
-```bash
-docker logs cms-jggwgwcw4w4gkkkwocokcog8-101101920253 --tail 100
-```
-Or get the latest container name:
-```bash
-docker logs $(docker ps -a | grep cms | head -1 | awk '{print $1}') --tail 100
-```
+## 🔍 What to Look For in the Logs
 
-## 3. Check if Strapi Port is Listening
-```bash
-docker exec $(docker ps -a | grep cms | head -1 | awk '{print $1}') nc -z localhost 1337 && echo "Port 1337 is open" || echo "Port 1337 is closed"
-```
+Look for these common errors:
 
-## 4. Check Environment Variables in CMS Container
-```bash
-docker exec $(docker ps -a | grep cms | head -1 | awk '{print $1}') env | grep -E "DATABASE|APP_KEYS|JWT|STRAPI"
-```
+### Database Connection Issues
+- `ECONNREFUSED`
+- `password authentication failed`
+- `database "district_interiors_cms" does not exist`
+- `Connection terminated unexpectedly`
+- `relation "strapi_migrations" does not exist`
 
-## 5. Test Database Connection from CMS Container
-```bash
-docker exec $(docker ps -a | grep cms | head -1 | awk '{print $1}') sh -c "nc -z postgres 5432 && echo 'Database reachable' || echo 'Database NOT reachable'"
-```
+### Missing Environment Variables
+- `APP_KEYS is required`
+- `JWT_SECRET is required`
+- `API_TOKEN_SALT is required`
+- `ADMIN_JWT_SECRET is required`
 
-## 6. Check Container Health Status
-```bash
-docker inspect $(docker ps -a | grep cms | head -1 | awk '{print $1}') | grep -A 10 Health
-```
+### Schema/Relation Errors
+- `inversedBy attribute not found`
+- `Error on attribute`
+- `mappedBy attribute not found`
 
-## 7. Enter CMS Container Shell (Interactive Debugging)
-```bash
-docker exec -it $(docker ps -a | grep cms | head -1 | awk '{print $1}') sh
-```
-Then inside the container:
-```bash
-# Check if Strapi process is running
-ps aux | grep node
+### Port/Startup Issues
+- `EADDRINUSE` (port already in use)
+- `Cannot bind to port 1337`
+- `Server wasn't able to start properly`
+- `⛔️ Server wasn't able to start properly`
 
-# Check if port 1337 is listening
-netstat -tlnp | grep 1337
+## 📋 Quick Checklist
 
-# Try to start Strapi manually to see errors
-cd /app && npm start
-```
+When checking logs, look for:
+1. ✅ Does Strapi start? (Look for "Server started" or "Your admin panel is ready")
+2. ✅ Database connection? (Look for connection errors)
+3. ✅ Environment variables? (Look for "required" errors)
+4. ✅ Schema errors? (Look for "inversedBy" or "mappedBy" errors)
 
-## 8. Check All Running Containers
-```bash
-docker ps -a
-```
+## 🎯 Most Common Issues & Solutions
 
-## 9. Check Docker Compose Services
-```bash
-docker compose ps
-```
+### Issue: "password authentication failed"
+**Solution:** Check that `DATABASE_PASSWORD` and `POSTGRES_PASSWORD` match in environment variables
 
-## 10. View Recent Logs with Timestamps
-```bash
-docker logs $(docker ps -a | grep cms | head -1 | awk '{print $1}') --tail 200 --timestamps
-```
+### Issue: "APP_KEYS is required"
+**Solution:** Make sure `APP_KEYS` is set in environment variables (comma-separated, 4 values)
 
-## Quick One-Liner to Get CMS Container Name
-```bash
-CMS_CONTAINER=$(docker ps -a | grep cms | head -1 | awk '{print $1}') && echo "CMS Container: $CMS_CONTAINER" && docker logs $CMS_CONTAINER --tail 50
-```
+### Issue: "inversedBy attribute not found"
+**Solution:** This is a schema error - should be fixed already, but check if there are other relations with the same issue
 
+### Issue: Container keeps restarting
+**Solution:** Check logs for the specific error causing the restart
+
+## 💡 Pro Tip
+Take a screenshot of the CMS logs and share it - that's the fastest way to diagnose the issue!
