@@ -25,8 +25,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install wget for healthcheck
-RUN apk add --no-cache wget
+# Install wget and netcat for healthcheck
+RUN apk add --no-cache wget netcat-openbsd
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs

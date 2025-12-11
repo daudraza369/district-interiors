@@ -58,9 +58,9 @@ services:
       - district-interiors-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:1337/_health 2>/dev/null || wget --spider -q http://localhost:1337/admin 2>/dev/null || wget --spider -q http://localhost:1337 2>/dev/null || exit 1"]
+      test: ["CMD-SHELL", "nc -z localhost 1337 || exit 1"]
       interval: 30s
-      timeout: 10s
+      timeout: 5s
       retries: 10
       start_period: 300s
 
