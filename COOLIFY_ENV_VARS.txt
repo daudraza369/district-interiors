@@ -1,0 +1,59 @@
+# Copy and paste these into Coolify Environment Variables
+# These are EXAMPLE values - you can use them as-is or replace with your own
+# IMPORTANT: Change POSTGRES_PASSWORD and DATABASE_PASSWORD to a strong password of your choice
+
+# ============================================
+# 1. DATABASE CONFIGURATION
+# ============================================
+DATABASE_CLIENT=postgres
+DATABASE_HOST=postgres
+DATABASE_PORT=5432
+DATABASE_NAME=district_interiors_cms
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=ChangeThis_DB_!94
+POSTGRES_PASSWORD=ChangeThis_DB_!94
+# NOTE: DATABASE_PASSWORD and POSTGRES_PASSWORD must MATCH
+
+# ============================================
+# 2. STRAPI SECRETS (Long random strings - these are example values)
+# ============================================
+APP_KEYS=ajsd81jhd9a7sdh9as,98asdha8sd7h9asd,asd897asdh98asdh,98ashd8ashd89ashd
+API_TOKEN_SALT=asdh98ashd98ashd98ashd
+ADMIN_JWT_SECRET=admin_jwt_ashd98ashd98ashd
+JWT_SECRET=jwt_ashd98ashd98ashd
+TRANSFER_TOKEN_SALT=transfer_salt_ashd98ashd98ashd
+
+# ============================================
+# 3. STRAPI SERVER CONFIGURATION
+# ============================================
+STRAPI_URL=http://cms:1337
+CORS_ORIGIN=http://web:3000,http://localhost:3000
+STRAPI_TELEMETRY_DISABLED=true
+
+# ============================================
+# 4. NEXT.JS APP CONFIGURATION
+# ============================================
+NEXT_PUBLIC_APP_URL=https://l0ow8gwo8kk4o08gw4k8o0ks.districtflowers.com
+NEXT_PUBLIC_STRAPI_URL=https://co448g44k8kcokw4skss04wk.districtflowers.com
+
+# ============================================
+# 5. STRIPE CONFIGURATION (Leave empty if not using Stripe yet)
+# ============================================
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+
+# ============================================
+# 6. STRAPI API TOKEN (Leave empty for now)
+# ============================================
+# Create this in Strapi admin after first successful deploy:
+# Settings → API Tokens → Create new API Token → Copy token here
+STRAPI_API_TOKEN=
+
+# ============================================
+# 7. SERVICE URLS (For Coolify - usually auto-set)
+# ============================================
+SERVICE_FQDN_CMS=co448g44k8kcokw4skss04wk.districtflowers.com
+SERVICE_FQDN_WEB=l0ow8gwo8kk4o08gw4k8o0ks.districtflowers.com
+SERVICE_URL_CMS=https://co448g44k8kcokw4skss04wk.districtflowers.com
+SERVICE_URL_WEB=https://l0ow8gwo8kk4o08gw4k8o0ks.districtflowers.com
