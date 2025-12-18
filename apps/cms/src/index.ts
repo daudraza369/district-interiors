@@ -9,6 +9,8 @@ export default {
    */
   register({ strapi }) {
     // Register custom routes with GET and PUT support
+    // Note: These routes will override default Strapi REST API routes
+    // We need to handle both GET (for custom formatting) and PUT (for content population)
     strapi.server.routes([
       {
         method: 'GET',
