@@ -84,7 +84,7 @@ export function CollectionPreviewSection({ data }: CollectionPreviewSectionProps
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {collections.map((item, index) => {
             // Get image URL - use Strapi image if available, otherwise use imageUrl fallback
-            const imageUrl = item.image ? getImageUrl(item.image) : (item.imageUrl || oliveTreeImg);
+            const imageUrl = item.image ? (getImageUrl(item.image) || oliveTreeImg) : (item.imageUrl || oliveTreeImg);
             return (
               <motion.div
                 key={`${item.title}-${index}`}

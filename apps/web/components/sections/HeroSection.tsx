@@ -35,19 +35,19 @@ export function HeroSection({ data }: HeroSectionProps) {
   }
   
   const beforeImageUrl = data?.beforeImage 
-    ? getImageUrl(data.beforeImage) 
-    : (data?.backgroundImage ? getImageUrl(data.backgroundImage) : defaultHeroImage);
+    ? (getImageUrl(data.beforeImage) || defaultHeroImage)
+    : (data?.backgroundImage ? (getImageUrl(data.backgroundImage) || defaultHeroImage) : defaultHeroImage);
   const afterImageUrl = data?.afterImage 
-    ? getImageUrl(data.afterImage) 
-    : (data?.heroImage ? getMediaUrl(data.heroImage) : defaultHeroImage);
+    ? (getImageUrl(data.afterImage) || defaultHeroImage)
+    : (data?.heroImage ? (getMediaUrl(data.heroImage) || defaultHeroImage) : defaultHeroImage);
   
   if (typeof window !== 'undefined') {
     console.log('Before Image URL:', beforeImageUrl);
     console.log('After Image URL:', afterImageUrl);
   }
   // Keep backgroundImageUrl for background (if needed)
-  const backgroundImageUrl = data?.backgroundImage ? getImageUrl(data.backgroundImage) : defaultHeroImage;
-  const heroMediaUrl = data?.heroImage ? getMediaUrl(data.heroImage) : defaultHeroImage;
+  const backgroundImageUrl = data?.backgroundImage ? (getImageUrl(data.backgroundImage) || defaultHeroImage) : defaultHeroImage;
+  const heroMediaUrl = data?.heroImage ? (getMediaUrl(data.heroImage) || defaultHeroImage) : defaultHeroImage;
   const isHeroVideo = data?.heroImage ? isVideo(data.heroImage) : false;
 
   const scrollToPortfolio = () => {

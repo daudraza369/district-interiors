@@ -99,7 +99,7 @@ export function ServicesSection({ data }: ServicesSectionProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => {
             // Get image URL - use Strapi image if available, otherwise use imageUrl fallback
-            const imageUrl = service.image ? getImageUrl(service.image) : (service.imageUrl || plantscapingImg);
+            const imageUrl = service.image ? (getImageUrl(service.image) || plantscapingImg) : (service.imageUrl || plantscapingImg);
             return (
               <motion.div
                 key={`${service.title}-${index}`}
