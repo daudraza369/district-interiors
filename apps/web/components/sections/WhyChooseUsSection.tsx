@@ -10,7 +10,7 @@ interface WhyChooseUsSectionProps {
 }
 
 // Icon mapping
-const iconMap = {
+const iconMap: Record<string, typeof Leaf> = {
   leaf: Leaf,
   palette: Palette,
   recycle: Recycle,
