@@ -14,9 +14,9 @@ const buttonVariants = cva(
         secondary:
           "border-2 border-night-green bg-transparent text-night-green hover:bg-night-green hover:text-ivory hover:scale-[1.03] hover:shadow-lg",
         hero:
-          "bg-ivory text-night-green hover:bg-pear hover:scale-[1.03] hover:shadow-lg",
+          "bg-[#E0E8C0] text-night-green hover:bg-[#E0E8C0]/90 hover:scale-[1.03] hover:shadow-lg",
         heroOutline:
-          "border-2 border-ivory bg-transparent text-ivory hover:bg-ivory hover:text-night-green hover:scale-[1.03] hover:shadow-lg",
+          "border-2 border-[#E0E8C0] bg-transparent text-[#E0E8C0] hover:bg-[#E0E8C0] hover:text-night-green hover:scale-[1.03] hover:shadow-lg",
         ghost:
           "text-night-green hover:bg-night-green/10 hover:text-night-green",
         link:

@@ -19,8 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Kalice', 'Playfair Display', 'Georgia', 'serif'],
+        heading: ['Kalice-Trial', 'Playfair Display', 'Georgia', 'serif'],
         body: ['Santana', 'Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        nav: ['PP Fragment', 'Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
       colors: {
         // Brand Colors
@@ -80,8 +81,9 @@ export default {
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "var(--radius)",
+        sm: "3px", // Global 3px border radius
+        DEFAULT: "3px", // Default border radius for all elements
       },
       keyframes: {
         "accordion-down": {

@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 /* District Interiors Brand Fonts */
+/* Kalice-Trial Font Family - use your exact Medium file */
 @font-face {
-  font-family: 'Kalice';
-  src: url('/fonts/Kalice-Regular.woff2') format('woff2'),
-       url('/fonts/Kalice-Regular.woff') format('woff');
-  font-weight: 400;
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-Medium.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -28,6 +28,17 @@
   font-display: swap;
 }
 
+/* PP FRAGMENT Bold - Navigation Font */
+@font-face {
+  font-family: 'PP Fragment';
+  src: url('/fonts/PPFragment-Bold.woff2') format('woff2'),
+       url('/fonts/PPFragment-Bold.woff') format('woff'),
+       url('/fonts/PPFragment-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     /* District Interiors Brand Colors */
@@ -35,6 +46,9 @@
     --slate-moss: 155 10% 32%;
     --stone: 60 3% 78%;
     --ivory: 60 30% 98%;
+    
+    /* Global Border Radius */
+    --global-radius: 3px;
     
     /* Pastel Accents */
     --pear: 72 46% 83%;
@@ -71,7 +85,7 @@
     --input: var(--stone);
     --ring: var(--night-green);
     
-    --radius: 0.25rem;
+    --radius: 3px;
     
     /* Sidebar */
     --sidebar-background: var(--ivory);
@@ -116,6 +130,22 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+  }
+
+  /* Global rounded corners (3px) for buttons, images, and sharp elements */
+  button,
+  img,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="image"],
+  .card,
+  figure,
+  picture,
+  video,
+  iframe,
+  canvas {
+    border-radius: 3px;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -212,6 +242,71 @@
   @keyframes marquee {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+  }
+
+  @keyframes scroll-x {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--marquee-gap, 2rem)));
+    }
+  }
+
+  /* Marquee Styles */
+  .marquee-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    gap: var(--marquee-gap, 2rem);
+    mask-image: linear-gradient(
+      to right,
+      hsl(0 0% 0% / 0),
+      hsl(0 0% 0% / 1) 20%,
+      hsl(0 0% 0% / 1) 80%,
+      hsl(0 0% 0% / 0)
+    );
+  }
+
+  .marquee__group {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--marquee-gap, 2rem);
+    min-width: 100%;
+    animation: scroll-x 60s linear infinite;
+  }
+
+  .marquee--reverse .marquee__group {
+    animation-direction: reverse;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__group {
+      animation-play-state: paused;
+    }
+  }
+
+  .marquee__item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+    height: 80px;
+  }
+
+  .marquee__item img {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
   }
 
   @keyframes slow-zoom {

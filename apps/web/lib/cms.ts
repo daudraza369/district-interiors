@@ -72,11 +72,20 @@ export interface Testimonial {
   displayOrder: number;
 }
 
-export interface ClientLogo {
+export interface ClientLogoItem {
   clientName: string;
   logo: { data: StrapiEntity<{ url: string; alternativeText?: string }> };
   websiteUrl?: string;
   displayOrder: number;
+}
+
+export interface ClientLogosSection {
+  title: string;
+  subtitle?: string;
+  row1Logos?: ClientLogoItem[];
+  showRow1?: boolean;
+  row2Logos?: ClientLogoItem[];
+  showRow2?: boolean;
 }
 
 export interface Stat {
@@ -115,6 +124,113 @@ export interface Discount {
   active: boolean;
 }
 
+// Hero Section
+export interface HeroSection {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  backgroundImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
+  heroImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }>[] };
+  beforeImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
+  afterImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
+}
+
+// Section Config
+export interface SectionConfig {
+  id?: number;
+  sectionKey: 'hero' | 'why-choose-us' | 'collection-preview' | 'services' | 'about-snapshot' | 'dual-cta' | 'stats' | 'client-logos' | 'portfolio' | 'gallery' | 'testimonials' | 'tree-consultation' | 'maintenance' | 'contact';
+  enabled: boolean;
+  displayOrder: number;
+  sectionName: string;
+}
+
+export interface HomePageLayout {
+  sections: SectionConfig[];
+}
+
+// Why Choose Us
+export interface FeatureItem {
+  icon: string;
+  title: string;
+  description: string;
+  displayOrder: number;
+}
+
+export interface WhyChooseUs {
+  title: string;
+  subtitle?: string;
+  features: FeatureItem[];
+}
+
+// Collection Preview
+export interface CollectionItem {
+  title: string;
+  description: string;
+  image?: { data: StrapiEntity<{ url: string; alternativeText?: string }> };
+  imageUrl?: string;
+  displayOrder: number;
+}
+
+export interface CollectionPreview {
+  title: string;
+  subtitle: string;
+  collections: CollectionItem[];
+}
+
+// Services Section
+export interface ServicePreviewItem {
+  title: string;
+  description: string;
+  cta: string;
+  href: string;
+  image?: { data: StrapiEntity<{ url: string; alternativeText?: string }> };
+  imageUrl?: string;
+  displayOrder: number;
+}
+
+export interface ServicesSection {
+  title?: string;
+  services: ServicePreviewItem[];
+}
+
+// About Snapshot
+export interface AboutSnapshot {
+  title: string;
+  subtitle?: string;
+  description: string;
+  image?: { data: StrapiEntity<{ url: string; alternativeText?: string }> };
+  imageUrl?: string;
+  imageAlt?: string;
+}
+
+// Dual CTA
+export interface DualCTA {
+  leftTitle: string;
+  leftSubtitle?: string;
+  leftButtonLabel: string;
+  leftButtonHref: string;
+  rightTitle: string;
+  rightSubtitle?: string;
+  rightButtonLabel: string;
+  rightButtonHref: string;
+}
+
+// Stats Section
+export interface StatItem {
+  value: number;
+  suffix?: string;
+  label: string;
+  isText?: boolean;
+  displayOrder: number;
+}
+
+export interface StatsSection {
+  title: string;
+  stats: StatItem[];
+}
+
 // Helper to get image URL
 export function getImageUrl(image?: { data: StrapiEntity<{ url: string }> }): string | null {
   if (!image?.data) return null;
@@ -126,6 +242,23 @@ export function getImageUrlArray(images?: { data: StrapiEntity<{ url: string }>[
   if (!images?.data) return [];
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
   return images.data.map(img => `${baseUrl}${img.attributes.url}`);
+}
+
+// Helper to get media URL (for images and videos)
+export function getMediaUrl(media?: { data: StrapiEntity<{ url: string; mime?: string }> | StrapiEntity<{ url: string; mime?: string }>[] }): string | null {
+  if (!media?.data) return null;
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  if (Array.isArray(media.data)) {
+    return media.data.length > 0 ? `${baseUrl}${media.data[0].attributes.url}` : null;
+  }
+  return `${baseUrl}${media.data.attributes.url}`;
+}
+
+// Helper to check if media is video
+export function isVideo(media?: { data: StrapiEntity<{ mime?: string }> | StrapiEntity<{ mime?: string }>[] }): boolean {
+  if (!media?.data) return false;
+  const mime = Array.isArray(media.data) ? media.data[0]?.attributes?.mime : media.data.attributes?.mime;
+  return mime?.startsWith('video/') || false;
 }
 
 // Homepage sections
@@ -216,12 +349,35 @@ export async function getTestimonials(): Promise<StrapiEntity<Testimonial>[]> {
   return data;
 }
 
-// Client logos
-export async function getClientLogos(): Promise<StrapiEntity<ClientLogo>[]> {
-  const { data } = await strapiFetch<StrapiEntity<ClientLogo>[]>(
-    '/client-logos?populate=*&sort=displayOrder:asc&filters[publishedAt][$notNull]=true'
-  );
-  return data;
+// Client logos section
+export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection> | null> {
+  try {
+    // strapiPublicFetch already adds /api prefix, so use /client-logos not /api/client-logos
+    const response = await strapiPublicFetch<StrapiEntity<ClientLogosSection>>(
+      '/client-logos'
+    );
+    
+    // strapiPublicFetch returns { data: T }, so response.data is StrapiEntity<ClientLogosSection>
+    if (!response || !response.data) {
+      console.warn('Client Logos Section not found in Strapi. Using fallback values.');
+      return null;
+    }
+    
+    const data = response.data;
+    
+    // Sort logos by displayOrder for both rows
+    if (data.attributes && data.attributes.row1Logos && Array.isArray(data.attributes.row1Logos)) {
+      data.attributes.row1Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+    }
+    if (data.attributes && data.attributes.row2Logos && Array.isArray(data.attributes.row2Logos)) {
+      data.attributes.row2Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('[getClientLogos] Error:', error);
+    return null;
+  }
 }
 
 // Stats
@@ -246,5 +402,157 @@ export async function getDiscountByCode(code: string): Promise<StrapiEntity<Disc
     `/discounts?filters[code][$eq]=${code}&filters[active][$eq]=true`
   );
   return data[0] || null;
+}
+
+// Hero Section
+export async function getHeroSection(): Promise<StrapiEntity<HeroSection> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<HeroSection>>(
+      '/hero-section?populate[backgroundImage]=*&populate[heroImage]=*&populate[beforeImage]=*&populate[afterImage]=*&publicationState=live'
+    );
+    if (!data) {
+      console.warn('Hero Section not found in Strapi. Using fallback values.');
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Hero Section:', error);
+    return null;
+  }
+}
+
+// Home Page Layout
+export async function getHomePageLayout(): Promise<StrapiEntity<HomePageLayout> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<HomePageLayout>>(
+      '/home-page-layout?populate[sections]=*&publicationState=live'
+    );
+    if (!data) {
+      console.warn('Home Page Layout not found in Strapi.');
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Home Page Layout:', error);
+    return null;
+  }
+}
+
+// Why Choose Us
+export async function getWhyChooseUs(): Promise<StrapiEntity<WhyChooseUs> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<WhyChooseUs>>(
+      '/why-choose-us?populate[features]=*&publicationState=live'
+    );
+    if (!data) {
+      console.warn('Why Choose Us not found in Strapi. Using fallback values.');
+      return null;
+    }
+    // Sort features by displayOrder
+    if (data.attributes.features) {
+      data.attributes.features.sort((a, b) => a.displayOrder - b.displayOrder);
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Why Choose Us:', error);
+    return null;
+  }
+}
+
+// Collection Preview
+export async function getCollectionPreview(): Promise<StrapiEntity<CollectionPreview> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<CollectionPreview>>(
+      '/collection-preview?populate[collections][populate]=image&publicationState=live'
+    );
+    if (!data) {
+      console.warn('Collection Preview not found in Strapi. Using fallback values.');
+      return null;
+    }
+    // Sort collections by displayOrder
+    if (data.attributes.collections) {
+      data.attributes.collections.sort((a, b) => a.displayOrder - b.displayOrder);
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Collection Preview:', error);
+    return null;
+  }
+}
+
+// Services Section
+export async function getServicesSection(): Promise<StrapiEntity<ServicesSection> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<ServicesSection>>(
+      '/services-section?populate[services][populate]=image&publicationState=live'
+    );
+    if (!data) {
+      console.warn('Services Section not found in Strapi. Using fallback values.');
+      return null;
+    }
+    // Sort services by displayOrder
+    if (data.attributes.services) {
+      data.attributes.services.sort((a, b) => a.displayOrder - b.displayOrder);
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Services Section:', error);
+    return null;
+  }
+}
+
+// About Snapshot
+export async function getAboutSnapshot(): Promise<StrapiEntity<AboutSnapshot> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<AboutSnapshot>>(
+      '/about-snapshot?populate=image&publicationState=live'
+    );
+    if (!data) {
+      console.warn('About Snapshot not found in Strapi. Using fallback values.');
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching About Snapshot:', error);
+    return null;
+  }
+}
+
+// Dual CTA
+export async function getDualCTA(): Promise<StrapiEntity<DualCTA> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<DualCTA>>(
+      '/dual-cta?publicationState=live'
+    );
+    if (!data) {
+      console.warn('Dual CTA not found in Strapi. Using fallback values.');
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Dual CTA:', error);
+    return null;
+  }
+}
+
+// Stats Section
+export async function getStatsSection(): Promise<StrapiEntity<StatsSection> | null> {
+  try {
+    const { data } = await strapiPublicFetch<StrapiEntity<StatsSection>>(
+      '/stats-section?populate=stats&publicationState=live'
+    );
+    if (!data) {
+      console.warn('Stats Section not found in Strapi. Using fallback values.');
+      return null;
+    }
+    // Sort stats by displayOrder
+    if (data.attributes.stats) {
+      data.attributes.stats.sort((a, b) => a.displayOrder - b.displayOrder);
+    }
+    return data;
+  } catch (error) {
+    console.warn('Error fetching Stats Section:', error);
+    return null;
+  }
 }
 

@@ -5,9 +5,29 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import type { DualCTA } from '@/lib/cms';
 
-export function DualCTASection() {
+interface DualCTASectionProps {
+  data?: DualCTA;
+}
+
+// Default fallback data - exact same as original hardcoded content
+const defaultData: DualCTA = {
+  leftTitle: 'Interior Plantscaping',
+  leftSubtitle: 'For offices, hotels, and restaurants',
+  leftButtonLabel: 'Explore Plantscaping',
+  leftButtonHref: '/services/plantscaping',
+  rightTitle: 'Tree Customization & Restoration',
+  rightSubtitle: 'For villas, malls, and public spaces',
+  rightButtonLabel: 'View Tree Solutions',
+  rightButtonHref: '/tree-solutions',
+};
+
+export function DualCTASection({ data }: DualCTASectionProps) {
   const { ref, isVisible } = useScrollAnimation<HTMLElement>();
+
+  // Use Strapi data if available, otherwise use defaults
+  const sectionData = data || defaultData;
 
   return (
     <section ref={ref} className="relative overflow-hidden">
@@ -26,11 +46,13 @@ export function DualCTASection() {
             </div>
 
             <div className="relative z-10 max-w-md">
-              <h3 className="text-night-green mb-3">Interior Plantscaping</h3>
-              <p className="text-slate-moss mb-8">For offices, hotels, and restaurants</p>
-              <Link href="/services/plantscaping">
+              <h3 className="text-night-green mb-3">{sectionData.leftTitle}</h3>
+              {sectionData.leftSubtitle && (
+                <p className="text-slate-moss mb-8">{sectionData.leftSubtitle}</p>
+              )}
+              <Link href={sectionData.leftButtonHref}>
                 <Button variant="default" className="group/btn">
-                  Explore Plantscaping
+                  {sectionData.leftButtonLabel}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </Link>
@@ -52,11 +74,13 @@ export function DualCTASection() {
             </div>
 
             <div className="relative z-10 max-w-md">
-              <h3 className="text-night-green mb-3">Tree Customization & Restoration</h3>
-              <p className="text-slate-moss mb-8">For villas, malls, and public spaces</p>
-              <Link href="/tree-solutions">
+              <h3 className="text-night-green mb-3">{sectionData.rightTitle}</h3>
+              {sectionData.rightSubtitle && (
+                <p className="text-slate-moss mb-8">{sectionData.rightSubtitle}</p>
+              )}
+              <Link href={sectionData.rightButtonHref}>
                 <Button variant="default" className="group/btn">
-                  View Tree Solutions
+                  {sectionData.rightButtonLabel}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </Link>

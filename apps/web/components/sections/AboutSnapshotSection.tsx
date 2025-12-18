@@ -2,11 +2,34 @@
 
 import { motion } from 'framer-motion';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { getImageUrl } from '@/lib/cms';
+import type { AboutSnapshot } from '@/lib/cms';
 
-const teamImage = '/hotel-atrium.jpg';
+interface AboutSnapshotSectionProps {
+  data?: AboutSnapshot;
+}
 
-export function AboutSnapshotSection() {
+const defaultImage = '/hotel-atrium.jpg';
+
+// Default fallback data - exact same as before
+const defaultData: AboutSnapshot = {
+  title: 'Designed to Breathe Life Into Spaces',
+  subtitle: 'A design-driven approach to greenery.',
+  description: 'District Interiors specializes in transforming indoor and outdoor environments through expert plantscaping, luxury softscaping, and custom tree fabrication. Our mission is simple: to merge natural aesthetics with architectural precision to deliver beauty, sustainability, and comfort.',
+  imageUrl: defaultImage,
+  imageAlt: 'Luxury hotel atrium with greenery installations',
+};
+
+export function AboutSnapshotSection({ data }: AboutSnapshotSectionProps) {
   const { ref, isVisible } = useScrollAnimation<HTMLElement>();
+  
+  // Use Strapi data if available, otherwise use defaults
+  const sectionData = data || defaultData;
+  const title = sectionData.title || 'Designed to Breathe Life Into Spaces';
+  const subtitle = sectionData.subtitle || 'A design-driven approach to greenery.';
+  const description = sectionData.description || defaultData.description;
+  const imageUrl = sectionData.image ? getImageUrl(sectionData.image) : (sectionData.imageUrl || defaultImage);
+  const imageAlt = sectionData.imageAlt || 'Luxury hotel atrium with greenery installations';
 
   return (
     <section ref={ref} className="section-padding bg-night-green pattern-overlay relative overflow-hidden">
@@ -18,10 +41,10 @@ export function AboutSnapshotSection() {
             animate={isVisible ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h2 className="text-ivory mb-6">Designed to Breathe Life Into Spaces</h2>
-            <p className="text-xl text-stone mb-4">A design-driven approach to greenery.</p>
+            <h2 className="text-ivory mb-6">{title}</h2>
+            {subtitle && <p className="text-xl text-stone mb-4">{subtitle}</p>}
             <p className="text-body text-stone/80 leading-relaxed">
-              District Interiors specializes in transforming indoor and outdoor environments through expert plantscaping, luxury softscaping, and custom tree fabrication. Our mission is simple: to merge natural aesthetics with architectural precision to deliver beauty, sustainability, and comfort.
+              {description}
             </p>
           </motion.div>
 
@@ -34,8 +57,8 @@ export function AboutSnapshotSection() {
           >
             <div className="aspect-[4/3] rounded-sm overflow-hidden">
               <img
-                src={teamImage}
-                alt="Luxury hotel atrium with greenery installations"
+                src={imageUrl}
+                alt={imageAlt}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-night-green/30 to-transparent" />

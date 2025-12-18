@@ -2,15 +2,24 @@
 
 import { motion } from 'framer-motion';
 import { useScrollAnimation, useCountAnimation } from '@/hooks/useScrollAnimation';
+import type { StatsSection as StatsSectionType, StatItem } from '@/lib/cms';
 
-const stats = [
-  { value: 250, suffix: '+', label: 'Projects Completed across the Kingdom' },
-  { value: 97, suffix: '', label: 'Locations Maintained monthly' },
-  { value: 1200, suffix: '+', label: 'Plants Installed and cared for' },
-  { value: 3, suffix: '–5 Days', label: 'Average installation turnaround', isText: true },
-];
+interface StatsSectionProps {
+  data?: StatsSectionType;
+}
 
-function StatCard({ stat, index, isVisible }: { stat: typeof stats[0]; index: number; isVisible: boolean }) {
+// Default fallback data - exact same as before
+const defaultData: StatsSectionType = {
+  title: 'Growing Impact Across the Region',
+  stats: [
+    { value: 250, suffix: '+', label: 'Projects Completed across the Kingdom', isText: false, displayOrder: 0 },
+    { value: 97, suffix: '', label: 'Locations Maintained monthly', isText: false, displayOrder: 1 },
+    { value: 1200, suffix: '+', label: 'Plants Installed and cared for', isText: false, displayOrder: 2 },
+    { value: 3, suffix: '–5 Days', label: 'Average installation turnaround', isText: true, displayOrder: 3 },
+  ],
+};
+
+function StatCard({ stat, index, isVisible }: { stat: StatItem; index: number; isVisible: boolean }) {
   const count = useCountAnimation(stat.isText ? 0 : stat.value, 2000, isVisible);
 
   return (
@@ -36,8 +45,13 @@ function StatCard({ stat, index, isVisible }: { stat: typeof stats[0]; index: nu
   );
 }
 
-export function StatsSection() {
+export function StatsSection({ data }: StatsSectionProps) {
   const { ref, isVisible } = useScrollAnimation<HTMLElement>();
+  
+  // Use Strapi data if available, otherwise use defaults
+  const sectionData = data || defaultData;
+  const title = sectionData.title || 'Growing Impact Across the Region';
+  const stats = sectionData.stats || [];
 
   return (
     <section ref={ref} className="section-padding bg-ivory">
@@ -49,13 +63,13 @@ export function StatsSection() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
-          <h2 className="text-night-green">Growing Impact Across the Region</h2>
+          <h2 className="text-night-green">{title}</h2>
         </motion.div>
 
         {/* Stats Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <StatCard key={stat.label} stat={stat} index={index} isVisible={isVisible} />
+            <StatCard key={`${stat.label}-${index}`} stat={stat} index={index} isVisible={isVisible} />
           ))}
         </div>
       </div>
