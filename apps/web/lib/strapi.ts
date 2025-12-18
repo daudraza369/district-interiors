@@ -43,9 +43,9 @@ export async function strapiFetch<T>(
   }
 
   try {
-    // Create AbortController for timeout (reduce to 3 seconds for faster failover)
+    // Create AbortController for timeout (reduce to 2 seconds for faster failover)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
     
     const response = await fetch(url, {
       ...options,
@@ -93,9 +93,9 @@ export async function strapiPublicFetch<T>(
   const url = `${STRAPI_URL}/api${endpoint}`;
   
   try {
-    // Create AbortController for timeout (reduce to 3 seconds for faster failover)
+    // Create AbortController for timeout (reduce to 2 seconds for faster failover)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
     
     const response = await fetch(url, {
       ...options,
