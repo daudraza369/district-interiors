@@ -31,6 +31,15 @@ fi
 
 echo "✅ Environment variables validated"
 
+# Debug: Print database configuration (without password)
+echo "🔍 Database Configuration:"
+echo "   DATABASE_CLIENT: ${DATABASE_CLIENT:-not set}"
+echo "   DATABASE_HOST: ${DATABASE_HOST:-not set}"
+echo "   DATABASE_PORT: ${DATABASE_PORT:-not set}"
+echo "   DATABASE_NAME: ${DATABASE_NAME:-not set}"
+echo "   DATABASE_USERNAME: ${DATABASE_USERNAME:-not set}"
+echo "   DATABASE_PASSWORD: ${DATABASE_PASSWORD:+***set***}"
+
 # Start Strapi
 echo "🚀 Starting Strapi..."
 exec npm start
