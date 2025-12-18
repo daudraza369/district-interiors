@@ -11,7 +11,8 @@ export default {
     // Register custom routes with GET and PUT support
     // IMPORTANT: PUT routes must be registered to allow content population via API
     // These routes override default Strapi REST API routes but add PUT support
-    strapi.server.routes([
+    try {
+      strapi.server.routes([
       {
         method: 'GET',
         path: '/api/hero-section',
@@ -744,6 +745,10 @@ export default {
         },
       },
     ]);
+    } catch (error) {
+      console.error('❌ Error registering custom routes:', error);
+      // Don't throw - allow Strapi to continue starting even if routes fail
+    }
   },
 
   /**
