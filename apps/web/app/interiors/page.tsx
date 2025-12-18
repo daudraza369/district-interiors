@@ -74,7 +74,7 @@ export default async function InteriorsPage() {
         <AboutSnapshotSection data={aboutSnapshotData?.attributes} />
         <DualCTASection data={dualCTAData?.attributes} />
         <StatsSection data={statsSectionData?.attributes} />
-        <PortfolioSection data={sectionsMap.get('portfolio')} />
+        <PortfolioSection />
         <GallerySection />
         <TestimonialsSection />
         <TreeConsultationPreview />
