@@ -8,7 +8,7 @@ export default {
    * This gives you an opportunity to extend code.
    */
   register({ strapi }) {
-    // Register custom routes
+    // Register custom routes with GET and PUT support
     strapi.server.routes([
       {
         method: 'GET',
@@ -91,6 +91,48 @@ export default {
         },
       },
       {
+        method: 'PUT',
+        path: '/api/hero-section',
+        handler: async (ctx) => {
+          try {
+            // Check if entry exists
+            const existing = await strapi.entityService.findMany('api::hero-section.hero-section');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              // Update existing
+              const updated = await strapi.entityService.update('api::hero-section.hero-section', entity.id, {
+                data,
+                populate: ['backgroundImage', 'heroImage', 'beforeImage', 'afterImage'],
+              });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              // Create new
+              const created = await strapi.entityService.create('api::hero-section.hero-section', {
+                data,
+                populate: ['backgroundImage', 'heroImage', 'beforeImage', 'afterImage'],
+              });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = {
+              error: {
+                status: 500,
+                name: 'HeroSectionError',
+                message: error.message || 'Error updating Hero Section',
+              },
+            };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
         method: 'GET',
         path: '/api/why-choose-us',
         handler: async (ctx) => {
@@ -124,6 +166,33 @@ export default {
                 message: error.message || 'Error fetching Why Choose Us',
               },
             };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
+        method: 'PUT',
+        path: '/api/why-choose-us',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::why-choose-us.why-choose-us');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::why-choose-us.why-choose-us', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::why-choose-us.why-choose-us', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
           }
         },
         config: {
@@ -198,6 +267,33 @@ export default {
         },
       },
       {
+        method: 'PUT',
+        path: '/api/collection-preview',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::collection-preview.collection-preview');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::collection-preview.collection-preview', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::collection-preview.collection-preview', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
         method: 'GET',
         path: '/api/services-section',
         handler: async (ctx) => {
@@ -254,6 +350,33 @@ export default {
                 message: error.message || 'Error fetching Services Section',
               },
             };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
+        method: 'PUT',
+        path: '/api/services-section',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::services-section.services-section');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::services-section.services-section', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::services-section.services-section', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
           }
         },
         config: {
@@ -320,6 +443,33 @@ export default {
         },
       },
       {
+        method: 'PUT',
+        path: '/api/about-snapshot',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::about-snapshot.about-snapshot');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::about-snapshot.about-snapshot', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::about-snapshot.about-snapshot', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
         method: 'GET',
         path: '/api/dual-cta',
         handler: async (ctx) => {
@@ -352,6 +502,33 @@ export default {
                 message: error.message || 'Error fetching Dual CTA',
               },
             };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
+        method: 'PUT',
+        path: '/api/dual-cta',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::dual-cta.dual-cta');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::dual-cta.dual-cta', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::dual-cta.dual-cta', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
           }
         },
         config: {
@@ -397,6 +574,33 @@ export default {
                 message: error.message || 'Error fetching Stats Section',
               },
             };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
+        method: 'PUT',
+        path: '/api/stats-section',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::stats-section.stats-section');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::stats-section.stats-section', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::stats-section.stats-section', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
           }
         },
         config: {
@@ -500,6 +704,33 @@ export default {
                 message: error.message || 'Error fetching Client Logos Section',
               },
             };
+          }
+        },
+        config: {
+          auth: false,
+          policies: [],
+          middlewares: [],
+        },
+      },
+      {
+        method: 'PUT',
+        path: '/api/client-logos',
+        handler: async (ctx) => {
+          try {
+            const existing = await strapi.entityService.findMany('api::client-logo.client-logo');
+            const entity = Array.isArray(existing) ? existing[0] : existing;
+            const data = ctx.request.body?.data || ctx.request.body;
+            
+            if (entity && entity.id) {
+              const updated = await strapi.entityService.update('api::client-logo.client-logo', entity.id, { data });
+              ctx.body = { data: { id: updated.id, attributes: updated } };
+            } else {
+              const created = await strapi.entityService.create('api::client-logo.client-logo', { data });
+              ctx.body = { data: { id: created.id, attributes: created } };
+            }
+          } catch (error: any) {
+            ctx.status = 500;
+            ctx.body = { error: { status: 500, message: error.message } };
           }
         },
         config: {
