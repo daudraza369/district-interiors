@@ -172,30 +172,25 @@ export default {
       // {
       //   method: 'PUT',
       //   path: '/api/why-choose-us',
-        handler: async (ctx) => {
-          try {
-            const existing = await strapi.entityService.findMany('api::why-choose-us.why-choose-us');
-            const entity = Array.isArray(existing) ? existing[0] : existing;
-            const data = ctx.request.body?.data || ctx.request.body;
-            
-            if (entity && entity.id) {
-              const updated = await strapi.entityService.update('api::why-choose-us.why-choose-us', entity.id, { data });
-              ctx.body = { data: { id: updated.id, attributes: updated } };
-            } else {
-              const created = await strapi.entityService.create('api::why-choose-us.why-choose-us', { data });
-              ctx.body = { data: { id: created.id, attributes: created } };
-            }
-          } catch (error: any) {
-            ctx.status = 500;
-            ctx.body = { error: { status: 500, message: error.message } };
-          }
-        },
-        config: {
-          auth: false,
-          policies: [],
-          middlewares: [],
-        },
-      },
+      //   handler: async (ctx) => {
+      //     try {
+      //       const existing = await strapi.entityService.findMany('api::why-choose-us.why-choose-us');
+      //       const entity = Array.isArray(existing) ? existing[0] : existing;
+      //       const data = ctx.request.body?.data || ctx.request.body;
+      //       if (entity && entity.id) {
+      //         const updated = await strapi.entityService.update('api::why-choose-us.why-choose-us', entity.id, { data });
+      //         ctx.body = { data: { id: updated.id, attributes: updated } };
+      //       } else {
+      //         const created = await strapi.entityService.create('api::why-choose-us.why-choose-us', { data });
+      //         ctx.body = { data: { id: created.id, attributes: created } };
+      //       }
+      //     } catch (error: any) {
+      //       ctx.status = 500;
+      //       ctx.body = { error: { status: 500, message: error.message } };
+      //     }
+      //   },
+      //   config: { auth: false, policies: [], middlewares: [] },
+      // },
       {
         method: 'GET',
         path: '/api/collection-preview',
