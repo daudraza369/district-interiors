@@ -58,9 +58,9 @@ services:
       - district-interiors-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 1337 || exit 1"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:1337/api || nc -z localhost 1337 || exit 1"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 10
       start_period: 300s
 
@@ -88,11 +88,20 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-    ports:
-      - "3000:3000"
+    # Port mapping removed - Coolify handles port mapping automatically
+    # ports:
+    #   - "3000:3000"
+    expose:
+      - "3000"
     networks:
       - district-interiors-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   postgres_data:

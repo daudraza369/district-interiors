@@ -7,7 +7,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps || npm install
+# Install dependencies - use npm ci if package-lock.json exists, otherwise npm install
+RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; else npm install --legacy-peer-deps; fi
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -43,6 +44,10 @@ COPY --from=builder --chown=strapi:nodejs /app/src ./src
 COPY --from=builder --chown=strapi:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=strapi:nodejs /app/.strapi ./.strapi
 
+# Copy and set up startup script
+COPY --chown=strapi:nodejs start.sh ./start.sh
+RUN chmod +x ./start.sh
+
 # Set ownership for all directories Strapi needs to write to
 RUN chown -R strapi:nodejs /app/public /app/.tmp /app/database
 
@@ -53,5 +58,5 @@ EXPOSE 1337
 ENV PORT=1337
 ENV HOST=0.0.0.0
 
-CMD ["npm", "start"]
+CMD ["./start.sh"]
 

@@ -7,7 +7,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-RUN npm install --legacy-peer-deps
+# Install dependencies - use npm ci if package-lock.json exists, otherwise npm install
+RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; else npm install --legacy-peer-deps; fi
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -26,7 +27,7 @@ ENV NEXT_PUBLIC_STRAPI_URL=${NEXT_PUBLIC_STRAPI_URL}
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 
 # Build Next.js with standalone output
-RUN npm run build || (echo "Build failed, checking logs..." && cat .next/trace 2>/dev/null || true && exit 1)
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
