@@ -60,9 +60,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:1337/api || nc -z localhost 1337 || exit 1"]
       interval: 30s
-      timeout: 10s
+      timeout: 20s
       retries: 10
-      start_period: 300s
+      start_period: 120s
 
   web:
     build:
