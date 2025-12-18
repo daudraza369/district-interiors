@@ -3,13 +3,20 @@ set -e
 
 echo "🚀 Starting Strapi CMS..."
 
-# Wait for database to be ready
+# Wait for database to be ready (with timeout)
 echo "⏳ Waiting for database to be ready..."
+timeout=60
+elapsed=0
 until nc -z ${DATABASE_HOST:-postgres} ${DATABASE_PORT:-5432}; do
-  echo "   Database not ready, waiting..."
+  if [ $elapsed -ge $timeout ]; then
+    echo "⚠️  Database connection timeout after ${timeout}s, but continuing anyway..."
+    break
+  fi
+  echo "   Database not ready, waiting... (${elapsed}s/${timeout}s)"
   sleep 2
+  elapsed=$((elapsed + 2))
 done
-echo "✅ Database is ready"
+echo "✅ Database check complete"
 
 # Check required environment variables
 if [ -z "$APP_KEYS" ]; then
@@ -27,6 +34,8 @@ echo "✅ Environment variables validated"
 # Start Strapi
 echo "🚀 Starting Strapi..."
 exec npm start
+
+
 
 
 
