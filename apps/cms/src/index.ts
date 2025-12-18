@@ -93,50 +93,39 @@ export default {
           middlewares: [],
         },
       },
-      {
-        method: 'PUT',
-        path: '/api/hero-section',
-        handler: async (ctx) => {
-          try {
-            // Check if entry exists
-            const existing = await strapi.entityService.findMany('api::hero-section.hero-section');
-            const entity = Array.isArray(existing) ? existing[0] : existing;
-            const data = ctx.request.body?.data || ctx.request.body;
-            
-            if (entity && entity.id) {
-              // Update existing
-              const updated = await strapi.entityService.update('api::hero-section.hero-section', entity.id, {
-                data,
-                populate: ['backgroundImage', 'heroImage', 'beforeImage', 'afterImage'],
-              });
-              ctx.body = { data: { id: updated.id, attributes: updated } };
-            } else {
-              // Create new
-              const created = await strapi.entityService.create('api::hero-section.hero-section', {
-                data,
-                populate: ['backgroundImage', 'heroImage', 'beforeImage', 'afterImage'],
-              });
-              ctx.body = { data: { id: created.id, attributes: created } };
-            }
-            ctx.status = 200;
-          } catch (error: any) {
-            console.error('PUT /api/hero-section error:', error);
-            ctx.status = 500;
-            ctx.body = {
-              error: {
-                status: 500,
-                name: 'HeroSectionError',
-                message: error.message || 'Error updating Hero Section',
-              },
-            };
-          }
-        },
-        config: {
-          auth: false, // Allow API token authentication via Bearer token
-          policies: [],
-          middlewares: [],
-        },
-      },
+      // PUT handler for Hero Section - temporarily disabled to fix Gateway Timeout
+      // Will be re-enabled after Strapi is stable
+      // {
+      //   method: 'PUT',
+      //   path: '/api/hero-section',
+      //   handler: async (ctx) => {
+      //     try {
+      //       const existing = await strapi.entityService.findMany('api::hero-section.hero-section');
+      //       const entity = Array.isArray(existing) ? existing[0] : existing;
+      //       const data = ctx.request.body?.data || ctx.request.body;
+      //       
+      //       if (entity && entity.id) {
+      //         const updated = await strapi.entityService.update('api::hero-section.hero-section', entity.id, {
+      //           data,
+      //           populate: ['backgroundImage', 'heroImage', 'beforeImage', 'afterImage'],
+      //         });
+      //         ctx.body = { data: { id: updated.id, attributes: updated } };
+      //       } else {
+      //         const created = await strapi.entityService.create('api::hero-section.hero-section', {
+      //           data,
+      //           populate: ['backgroundImage', 'heroImage', 'beforeImage', 'afterImage'],
+      //         });
+      //         ctx.body = { data: { id: created.id, attributes: created } };
+      //       }
+      //       ctx.status = 200;
+      //     } catch (error: any) {
+      //       console.error('PUT /api/hero-section error:', error);
+      //       ctx.status = 500;
+      //       ctx.body = { error: { status: 500, name: 'HeroSectionError', message: error.message } };
+      //     }
+      //   },
+      //   config: { auth: false, policies: [], middlewares: [] },
+      // },
       {
         method: 'GET',
         path: '/api/why-choose-us',
