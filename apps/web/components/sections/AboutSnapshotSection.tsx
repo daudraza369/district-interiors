@@ -28,7 +28,7 @@ export function AboutSnapshotSection({ data }: AboutSnapshotSectionProps) {
   const title = sectionData.title || 'Designed to Breathe Life Into Spaces';
   const subtitle = sectionData.subtitle || 'A design-driven approach to greenery.';
   const description = sectionData.description || defaultData.description;
-  const imageUrl = sectionData.image ? getImageUrl(sectionData.image) : (sectionData.imageUrl || defaultImage);
+  const imageUrl = sectionData.image ? (getImageUrl(sectionData.image) || defaultImage) : (sectionData.imageUrl || defaultImage);
   const imageAlt = sectionData.imageAlt || 'Luxury hotel atrium with greenery installations';
 
   return (
