@@ -43,11 +43,28 @@ export async function strapiFetch<T>(
   }
 
   try {
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch(url, {
       ...options,
       headers,
-      next: { revalidate: 3600 }, // ISR: revalidate every hour
+      signal: controller.signal,
+      // In development, always fetch fresh data (no cache)
+      // In production, cache for 1 hour
+      ...(process.env.NODE_ENV === 'development' 
+        ? { cache: 'no-store' } 
+        : { next: { revalidate: 3600 } }),
     });
+    
+    clearTimeout(timeoutId);
+
+    // Handle 404 gracefully - content might not exist yet
+    if (response.status === 404) {
+      console.warn(`Strapi endpoint not found: ${endpoint}. Returning null.`);
+      return { data: null as T };
+    }
 
     if (!response.ok) {
       throw new Error(`Strapi API error: ${response.statusText}`);
@@ -55,12 +72,14 @@ export async function strapiFetch<T>(
 
     return response.json();
   } catch (error: any) {
-    // Handle connection errors gracefully
-    if (error.message?.includes('fetch failed') || error.code === 'ECONNREFUSED') {
-      console.warn(`Strapi not available at ${STRAPI_URL}. Returning empty data.`);
-      return { data: [] as T };
+    // Handle timeout and connection errors gracefully
+    if (error.name === 'AbortError' || error.message?.includes('fetch failed') || error.code === 'ECONNREFUSED' || error.message?.includes('timeout')) {
+      console.warn(`Strapi not available at ${STRAPI_URL} (timeout or connection error). Returning empty data.`);
+      return { data: null as T };
     }
-    throw error;
+    // For other errors, still return null instead of throwing
+    console.warn(`Strapi API error for ${endpoint}:`, error.message);
+    return { data: null as T };
   }
 }
 
@@ -73,20 +92,34 @@ export async function strapiPublicFetch<T>(
 ): Promise<StrapiResponse<T>> {
   const url = `${STRAPI_URL}/api${endpoint}`;
   
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    cache: 'no-store', // Client-side: always fresh
-  });
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        ...options.headers,
+      },
+      cache: 'no-store', // Always fetch fresh data
+      next: { revalidate: 0 }, // Next.js: no revalidation
+    });
 
-  if (!response.ok) {
-    throw new Error(`Strapi API error: ${response.statusText}`);
+    // Handle 404 gracefully
+    if (response.status === 404) {
+      console.warn(`Strapi endpoint not found: ${endpoint}. Returning null.`);
+      return { data: null as T };
+    }
+
+    if (!response.ok) {
+      throw new Error(`Strapi API error: ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error: any) {
+    console.warn(`Strapi API error for ${endpoint}:`, error.message);
+    return { data: null as T };
   }
-
-  return response.json();
 }
 
 /**

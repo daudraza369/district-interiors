@@ -74,7 +74,7 @@ services:
     container_name: district-interiors-web
     depends_on:
       cms:
-        condition: service_healthy
+        condition: service_started
     environment:
       # App Configuration
       NODE_ENV: production
