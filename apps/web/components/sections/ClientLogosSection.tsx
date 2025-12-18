@@ -9,7 +9,12 @@ interface ClientLogosSectionProps {
   data?: ClientLogosSectionType;
 }
 
-const defaultClients = [
+// Define a proper type for client items (discriminated union)
+type ClientItem = 
+  | { name: string; placeholder: true }
+  | { name: string; logo: { data: any }; websiteUrl?: string; placeholder: false };
+
+const defaultClients: ClientItem[] = [
   { name: 'PepsiCo', placeholder: true },
   { name: 'Savvy', placeholder: true },
   { name: 'Crowne Plaza', placeholder: true },
@@ -26,13 +31,13 @@ export function ClientLogosSection({ data }: ClientLogosSectionProps) {
   const subtitle = data?.subtitle || 'Proud collaborations with top names in hospitality and design.';
 
   // Helper to convert logo items to client format
-  const convertLogosToClients = (logos?: ClientLogosSectionType['row1Logos']) => {
+  const convertLogosToClients = (logos?: ClientLogosSectionType['row1Logos']): ClientItem[] => {
     if (!logos || logos.length === 0) return [];
     return logos.map((logoItem) => ({
       name: logoItem.clientName,
       logo: logoItem.logo,
       websiteUrl: logoItem.websiteUrl,
-      placeholder: false,
+      placeholder: false as const,
     }));
   };
 
