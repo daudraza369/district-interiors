@@ -131,6 +131,14 @@ export interface HeroSection {
   description?: string;
   ctaText?: string;
   ctaHref?: string;
+  primaryButtonText?: string;
+  primaryButtonAction?: 'link' | 'scroll';
+  primaryButtonLink?: string;
+  primaryButtonScrollTarget?: string;
+  secondaryButtonText?: string;
+  secondaryButtonAction?: 'link' | 'scroll';
+  secondaryButtonLink?: string;
+  secondaryButtonScrollTarget?: string;
   backgroundImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
   heroImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }>[] };
   beforeImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
