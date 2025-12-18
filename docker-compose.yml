@@ -5,13 +5,13 @@ services:
     image: postgres:15
     container_name: district-interiors-postgres
     environment:
-      POSTGRES_DB: district_cms
-      POSTGRES_USER: strapi_user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strapi_secure_password}
+      POSTGRES_DB: ${DATABASE_NAME:-district_interiors_cms}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U strapi_user"]
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5

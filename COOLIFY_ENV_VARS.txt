@@ -8,10 +8,10 @@
 DATABASE_CLIENT=postgres
 DATABASE_HOST=postgres
 DATABASE_PORT=5432
-DATABASE_NAME=district_cms
-DATABASE_USERNAME=strapi_user
-DATABASE_PASSWORD=strapi_secure_password
-POSTGRES_PASSWORD=strapi_secure_password
+DATABASE_NAME=district_interiors_cms
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+POSTGRES_PASSWORD=postgres
 # NOTE: DATABASE_PASSWORD and POSTGRES_PASSWORD must MATCH
 
 # ============================================
