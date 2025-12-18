@@ -117,7 +117,9 @@ export default {
               });
               ctx.body = { data: { id: created.id, attributes: created } };
             }
+            ctx.status = 200;
           } catch (error: any) {
+            console.error('PUT /api/hero-section error:', error);
             ctx.status = 500;
             ctx.body = {
               error: {
@@ -129,7 +131,7 @@ export default {
           }
         },
         config: {
-          auth: false,
+          auth: false, // Allow API token authentication via Bearer token
           policies: [],
           middlewares: [],
         },
