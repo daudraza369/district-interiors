@@ -1,5 +1,6 @@
 #!/bin/sh
-set -e
+# Don't use set -e here - we want to continue even if some steps fail
+set +e
 
 echo "🔍 Checking if database exists..."
 
@@ -38,16 +39,36 @@ if command -v psql > /dev/null 2>&1; then
     if [ -z "$TEST_USER" ]; then
       continue
     fi
+    echo "   Trying user: $TEST_USER..."
     # Try with POSTGRES_PASSWORD first, then DATABASE_PASSWORD
     for TEST_PASS in "${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" "${DATABASE_PASSWORD:-postgres}"; do
       if PGPASSWORD="$TEST_PASS" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$TEST_USER" -d postgres -c "SELECT 1" >/dev/null 2>&1; then
         SUPERUSER_FOUND="$TEST_USER"
         SUPERUSER_PASSWORD="$TEST_PASS"
-        echo "✅ Found working superuser: $TEST_USER"
+        echo "   ✅ Found working superuser: $TEST_USER"
         break 2
+      else
+        echo "   ❌ Failed to connect as $TEST_USER"
       fi
     done
   done
+  
+  # If still no superuser found, try to list all users from template1 (which always exists)
+  if [ -z "$SUPERUSER_FOUND" ]; then
+    echo "⚠️  Could not find superuser by testing. Attempting to query PostgreSQL directly..."
+    # Try connecting without specifying a database (connects to default)
+    # This might work if we can find ANY existing user
+    for TEST_PASS in "${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" "${DATABASE_PASSWORD:-postgres}"; do
+      # Try to connect to template1 which always exists
+      EXISTING_USER=$(PGPASSWORD="$TEST_PASS" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U postgres -d template1 -tAc "SELECT rolname FROM pg_roles WHERE rolsuper = true LIMIT 1;" 2>/dev/null || echo "")
+      if [ -n "$EXISTING_USER" ]; then
+        echo "   ✅ Found superuser in database: $EXISTING_USER"
+        SUPERUSER_FOUND="$EXISTING_USER"
+        SUPERUSER_PASSWORD="$TEST_PASS"
+        break
+      fi
+    done
+  fi
   
   # Check if the desired user exists
   if [ -n "$SUPERUSER_FOUND" ]; then
