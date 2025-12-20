@@ -26,8 +26,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install wget and netcat for healthcheck
-RUN apk add --no-cache wget netcat-openbsd
+# Install wget, netcat, and postgresql-client for healthcheck and database initialization
+RUN apk add --no-cache wget netcat-openbsd postgresql-client
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -44,9 +44,10 @@ COPY --from=builder --chown=strapi:nodejs /app/src ./src
 COPY --from=builder --chown=strapi:nodejs /app/package.json ./package.json
 COPY --from=builder --chown=strapi:nodejs /app/.strapi ./.strapi
 
-# Copy and set up startup script
+# Copy and set up startup scripts
 COPY --chown=strapi:nodejs start.sh ./start.sh
-RUN chmod +x ./start.sh
+COPY --chown=strapi:nodejs init-database.sh ./init-database.sh
+RUN chmod +x ./start.sh ./init-database.sh
 
 # Set ownership for all directories Strapi needs to write to
 RUN chown -R strapi:nodejs /app/public /app/.tmp /app/database

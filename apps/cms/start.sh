@@ -3,6 +3,13 @@ set -e
 
 echo "🚀 Starting Strapi CMS..."
 
+# Run database initialization script first
+if [ -f "./init-database.sh" ]; then
+  echo "📋 Running database initialization..."
+  chmod +x ./init-database.sh
+  ./init-database.sh
+fi
+
 # Wait for database to be ready (with timeout)
 echo "⏳ Waiting for database to be ready..."
 timeout=60
@@ -16,7 +23,7 @@ until nc -z ${DATABASE_HOST:-postgres} ${DATABASE_PORT:-5432}; do
   sleep 2
   elapsed=$((elapsed + 2))
 done
-echo "✅ Database check complete"
+echo "✅ Database connection check complete"
 
 # Check required environment variables
 if [ -z "$APP_KEYS" ]; then
