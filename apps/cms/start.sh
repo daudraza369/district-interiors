@@ -7,7 +7,8 @@ echo "🚀 Starting Strapi CMS..."
 if [ -f "./init-database.sh" ]; then
   echo "📋 Running database initialization..."
   chmod +x ./init-database.sh || true
-  ./init-database.sh 2>&1 || echo "⚠️  Database init script had errors, but continuing..."
+  echo "📋 Executing init-database.sh..."
+  ./init-database.sh || echo "⚠️  Database init script exited with errors, but continuing..."
 else
   echo "⚠️  init-database.sh not found, skipping database initialization"
 fi
