@@ -53,9 +53,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER root
 RUN apk add --no-cache vips-dev > /dev/null 2>&1 || true
 USER nextjs
-# Copy node_modules if sharp exists, otherwise Next.js will fall back to slower optimization
-
-USER nextjs
+# sharp will be installed via package.json dependencies
 
 EXPOSE 3000
 
