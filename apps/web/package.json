@@ -58,7 +58,8 @@
     "vaul": "^0.9.9",
     "zod": "^3.25.76",
     "stripe": "^14.21.0",
-    "@tanstack/react-query": "^5.83.0"
+    "@tanstack/react-query": "^5.83.0",
+    "sharp": "^0.33.0"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",

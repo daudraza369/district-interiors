@@ -49,8 +49,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Install sharp for image optimization in production
+# Note: sharp needs to be in package.json dependencies, but as fallback install it here
+USER root
 RUN apk add --no-cache vips-dev > /dev/null 2>&1 || true
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/sharp ./node_modules/sharp
+USER nextjs
+# Copy node_modules if sharp exists, otherwise Next.js will fall back to slower optimization
 
 USER nextjs
 

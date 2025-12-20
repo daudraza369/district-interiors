@@ -25,46 +25,73 @@ fi
 if command -v psql > /dev/null 2>&1; then
   echo "📊 Checking PostgreSQL user: ${DATABASE_USERNAME:-postgres}"
   
-  # Try to connect with the specified username to check if it exists
-  # First, try to connect without specifying a database (connects to default postgres database)
-  # Use the postgres superuser if available, otherwise try the specified user
-  DB_USER_EXISTS=$(PGPASSWORD="${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U postgres -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DATABASE_USERNAME:-postgres}'" 2>/dev/null || \
-    PGPASSWORD="${DATABASE_PASSWORD:-postgres}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}" -d postgres -tAc "SELECT 1" 2>/dev/null && echo "1" || echo "0")
+  # First, find ANY existing superuser by trying common usernames
+  # PostgreSQL always creates at least one superuser during initialization
+  SUPERUSER_FOUND=""
+  SUPERUSER_PASSWORD=""
   
-  # If we can't determine if user exists (connection failed), try creating it
-  if [ "$DB_USER_EXISTS" != "1" ]; then
-    echo "👤 User '${DATABASE_USERNAME:-postgres}' does not exist or cannot connect, attempting to create..."
+  # List of possible superusers to try (in order of likelihood)
+  POSSIBLE_USERS="postgres ${DATABASE_USERNAME:-postgres} ${POSTGRES_USER:-postgres}"
+  
+  echo "🔍 Looking for existing PostgreSQL superuser..."
+  for TEST_USER in $POSSIBLE_USERS; do
+    if [ -z "$TEST_USER" ]; then
+      continue
+    fi
+    # Try with POSTGRES_PASSWORD first, then DATABASE_PASSWORD
+    for TEST_PASS in "${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" "${DATABASE_PASSWORD:-postgres}"; do
+      if PGPASSWORD="$TEST_PASS" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$TEST_USER" -d postgres -c "SELECT 1" >/dev/null 2>&1; then
+        SUPERUSER_FOUND="$TEST_USER"
+        SUPERUSER_PASSWORD="$TEST_PASS"
+        echo "✅ Found working superuser: $TEST_USER"
+        break 2
+      fi
+    done
+  done
+  
+  # Check if the desired user exists
+  if [ -n "$SUPERUSER_FOUND" ]; then
+    USER_EXISTS=$(PGPASSWORD="$SUPERUSER_PASSWORD" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$SUPERUSER_FOUND" -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DATABASE_USERNAME:-postgres}'" 2>/dev/null || echo "0")
     
-    # Try to connect as postgres superuser first (if POSTGRES_PASSWORD is different)
-    # If that fails, try connecting with the username itself (it might be a superuser)
-    PGPASSWORD="${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U postgres -d postgres -c "CREATE USER \"${DATABASE_USERNAME:-postgres}\" WITH PASSWORD '${DATABASE_PASSWORD:-postgres}' SUPERUSER;" 2>/dev/null && echo "✅ User created successfully" || \
-    PGPASSWORD="${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "${POSTGRES_USER:-postgres}" -d postgres -c "CREATE USER \"${DATABASE_USERNAME:-postgres}\" WITH PASSWORD '${DATABASE_PASSWORD:-postgres}' SUPERUSER;" 2>/dev/null && echo "✅ User created successfully" || \
-    echo "⚠️  Could not create user (may already exist or need different superuser)"
+    if [ "$USER_EXISTS" != "1" ]; then
+      echo "👤 Creating user '${DATABASE_USERNAME:-postgres}'..."
+      if PGPASSWORD="$SUPERUSER_PASSWORD" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$SUPERUSER_FOUND" -d postgres -c "CREATE USER \"${DATABASE_USERNAME:-postgres}\" WITH PASSWORD '${DATABASE_PASSWORD:-postgres}' SUPERUSER CREATEDB CREATEROLE;" 2>/dev/null; then
+        echo "✅ User created successfully"
+      else
+        echo "⚠️  Could not create user (may need different permissions)"
+      fi
+    else
+      echo "✅ User '${DATABASE_USERNAME:-postgres}' already exists"
+      # Update password to match env var
+      PGPASSWORD="$SUPERUSER_PASSWORD" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$SUPERUSER_FOUND" -d postgres -c "ALTER USER \"${DATABASE_USERNAME:-postgres}\" WITH PASSWORD '${DATABASE_PASSWORD:-postgres}';" 2>/dev/null || true
+    fi
   else
-    echo "✅ User exists"
+    echo "⚠️  Could not find any existing superuser. PostgreSQL may not be initialized yet."
   fi
   
   echo "📊 Checking database: ${DATABASE_NAME:-district_interiors_cms}"
   
-  # Now try to connect with the user we want to use
-  # Check if database exists
-  DB_EXISTS=$(PGPASSWORD="${DATABASE_PASSWORD:-postgres}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='${DATABASE_NAME:-district_interiors_cms}'" 2>/dev/null || echo "0")
-  
-  if [ "$DB_EXISTS" != "1" ]; then
-    echo "📝 Database does not exist, creating it..."
-    PGPASSWORD="${DATABASE_PASSWORD:-postgres}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}" -d postgres -c "CREATE DATABASE \"${DATABASE_NAME:-district_interiors_cms}\";" 2>/dev/null && echo "✅ Database created successfully" || \
-    # If that fails, try with postgres superuser
-    PGPASSWORD="${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U postgres -d postgres -c "CREATE DATABASE \"${DATABASE_NAME:-district_interiors_cms}\" OWNER \"${DATABASE_USERNAME:-postgres}\";" 2>/dev/null && echo "✅ Database created successfully" || \
-    echo "⚠️  Could not create database (may already exist or permissions issue)"
+  # Check if database exists and create if needed
+  if [ -n "$SUPERUSER_FOUND" ]; then
+    DB_EXISTS=$(PGPASSWORD="$SUPERUSER_PASSWORD" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$SUPERUSER_FOUND" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='${DATABASE_NAME:-district_interiors_cms}'" 2>/dev/null || echo "0")
+    
+    if [ "$DB_EXISTS" != "1" ]; then
+      echo "📝 Creating database '${DATABASE_NAME:-district_interiors_cms}'..."
+      if PGPASSWORD="$SUPERUSER_PASSWORD" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$SUPERUSER_FOUND" -d postgres -c "CREATE DATABASE \"${DATABASE_NAME:-district_interiors_cms}\" OWNER \"${DATABASE_USERNAME:-postgres}\";" 2>/dev/null; then
+        echo "✅ Database created successfully"
+      else
+        echo "⚠️  Could not create database"
+      fi
+    else
+      echo "✅ Database '${DATABASE_NAME:-district_interiors_cms}' already exists"
+    fi
+    
+    # Grant permissions
+    echo "🔐 Ensuring permissions..."
+    PGPASSWORD="$SUPERUSER_PASSWORD" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "$SUPERUSER_FOUND" -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"${DATABASE_NAME:-district_interiors_cms}\" TO \"${DATABASE_USERNAME:-postgres}\";" 2>/dev/null || true
   else
-    echo "✅ Database already exists"
+    echo "⚠️  Skipping database creation - no superuser found"
   fi
-  
-  # Grant permissions to ensure the user can access the database
-  echo "🔐 Ensuring user has proper permissions..."
-  PGPASSWORD="${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"${DATABASE_NAME:-district_interiors_cms}\" TO \"${DATABASE_USERNAME:-postgres}\";" 2>/dev/null || \
-  PGPASSWORD="${POSTGRES_PASSWORD:-${DATABASE_PASSWORD:-postgres}}" psql -h "${DATABASE_HOST:-postgres}" -p "${DATABASE_PORT:-5432}" -U "${POSTGRES_USER:-postgres}" -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"${DATABASE_NAME:-district_interiors_cms}\" TO \"${DATABASE_USERNAME:-postgres}\";" 2>/dev/null || \
-  echo "⚠️  Could not grant permissions (user may already have access)"
 else
   echo "⚠️  psql not available, skipping database creation check"
   echo "   PostgreSQL should create the database automatically on first run"
