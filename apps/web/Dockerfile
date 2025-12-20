@@ -48,6 +48,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Install sharp for image optimization in production
+RUN apk add --no-cache vips-dev > /dev/null 2>&1 || true
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/sharp ./node_modules/sharp
+
 USER nextjs
 
 EXPOSE 3000
