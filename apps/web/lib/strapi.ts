@@ -43,9 +43,15 @@ export async function strapiFetch<T>(
   }
 
   try {
-    // Create AbortController for timeout (reduce to 2 seconds for faster failover)
+    // Log request details for debugging
+    console.log(`[strapiFetch] Fetching ${url}`, {
+      endpoint,
+      hasToken: !!STRAPI_API_TOKEN,
+    });
+    
+    // Create AbortController for timeout (increase to 10 seconds for debugging)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
     const response = await fetch(url, {
       ...options,
@@ -59,16 +65,37 @@ export async function strapiFetch<T>(
 
     // Handle 404 gracefully - content might not exist yet
     if (response.status === 404) {
-      console.warn(`Strapi endpoint not found: ${endpoint}. Returning null.`);
+      console.warn(`[strapiFetch] Strapi endpoint not found: ${endpoint}. Returning null.`);
       return { data: null as T };
     }
 
     if (!response.ok) {
-      throw new Error(`Strapi API error: ${response.statusText}`);
+      const errorText = await response.text().catch(() => 'Could not read error response');
+      console.error(`[strapiFetch] Strapi API error (${response.status}):`, {
+        status: response.status,
+        statusText: response.statusText,
+        endpoint,
+        errorText: errorText.substring(0, 500),
+      });
+      throw new Error(`Strapi API error: ${response.status} ${response.statusText} - ${errorText.substring(0, 100)}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log(`[strapiFetch] Successfully fetched ${endpoint}`);
+    return data;
   } catch (error: any) {
+    // Log detailed error for debugging
+    console.error(`[strapiFetch] Error fetching ${url}:`, {
+      endpoint,
+      url,
+      error: error.message,
+      name: error.name,
+      code: error.code,
+      STRAPI_URL,
+      hasToken: !!STRAPI_API_TOKEN,
+      tokenLength: STRAPI_API_TOKEN?.length || 0,
+    });
+    
     // Handle timeout and connection errors gracefully
     if (error.name === 'AbortError' || error.message?.includes('fetch failed') || error.code === 'ECONNREFUSED' || error.message?.includes('timeout') || error.code === 'ETIMEDOUT') {
       console.warn(`Strapi not available at ${STRAPI_URL} (timeout or connection error). Returning empty data.`);
