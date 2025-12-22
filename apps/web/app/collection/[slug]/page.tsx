@@ -4,7 +4,8 @@ import { ProductDetailClient } from './ProductDetailClient';
 import { getProductBySlug } from '@/lib/cms';
 import { notFound } from 'next/navigation';
 
-export const revalidate = 3600;
+// Force dynamic rendering since we fetch from Strapi
+export const dynamic = 'force-dynamic';
 
 export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
   const product = await getProductBySlug(params.slug);

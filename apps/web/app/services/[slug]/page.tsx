@@ -4,7 +4,8 @@ import { ServiceDetailClient } from './ServiceDetailClient';
 import { getServiceBySlug } from '@/lib/cms';
 import { notFound } from 'next/navigation';
 
-export const revalidate = 3600;
+// Force dynamic rendering since we fetch from Strapi
+export const dynamic = 'force-dynamic';
 
 export default async function ServiceDetailPage({ params }: { params: { slug: string } }) {
   const service = await getServiceBySlug(params.slug);

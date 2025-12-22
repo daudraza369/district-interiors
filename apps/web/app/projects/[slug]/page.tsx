@@ -4,7 +4,8 @@ import { ProjectDetailClient } from './ProjectDetailClient';
 import { getProjectBySlug } from '@/lib/cms';
 import { notFound } from 'next/navigation';
 
-export const revalidate = 3600;
+// Force dynamic rendering since we fetch from Strapi
+export const dynamic = 'force-dynamic';
 
 export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
   const project = await getProjectBySlug(params.slug);

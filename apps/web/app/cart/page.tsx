@@ -3,7 +3,8 @@ import { Footer } from '@/components/layout/Footer';
 import { CartPageClient } from './CartPageClient';
 import { getProducts, getShippingOptions } from '@/lib/cms';
 
-export const revalidate = 3600;
+// Force dynamic rendering since we fetch from Strapi
+export const dynamic = 'force-dynamic';
 
 export default async function CartPage() {
   const [productsData, shippingOptions] = await Promise.all([
