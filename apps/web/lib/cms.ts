@@ -251,7 +251,7 @@ export function getImageUrl(image?: { data?: StrapiEntity<{ url: string }> } | {
   }
   
   // Strapi v4 format: image.data.attributes.url
-  if (image.data?.attributes?.url) {
+  if ('data' in image && image.data?.attributes?.url) {
     return `${baseUrl}${image.data.attributes.url}`;
   }
   
@@ -290,7 +290,7 @@ export function getMediaUrl(media?: { data?: StrapiEntity<{ url: string; mime?: 
   }
   
   // Strapi v4 format: media.data.attributes.url
-  if (media.data) {
+  if ('data' in media && media.data) {
     if (Array.isArray(media.data)) {
       return media.data.length > 0 && media.data[0].attributes?.url ? `${baseUrl}${media.data[0].attributes.url}` : null;
     }
@@ -316,7 +316,7 @@ export function isVideo(media?: { data?: StrapiEntity<{ mime?: string }> | Strap
   }
   
   // Strapi v4 format: media.data.attributes.mime
-  if (media.data) {
+  if ('data' in media && media.data) {
     const mime = Array.isArray(media.data) ? media.data[0]?.attributes?.mime : media.data.attributes?.mime;
     return mime?.startsWith('video/') || false;
   }
