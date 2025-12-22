@@ -415,8 +415,10 @@ export async function getDiscountByCode(code: string): Promise<StrapiEntity<Disc
 // Hero Section
 export async function getHeroSection(): Promise<StrapiEntity<HeroSection> | null> {
   try {
-    const { data } = await strapiPublicFetch<StrapiEntity<HeroSection>>(
-      '/hero-section?populate[backgroundImage]=*&populate[heroImage]=*&populate[beforeImage]=*&populate[afterImage]=*&publicationState=live'
+    // Use server-side fetch with API token for Strapi v5
+    // Simple populate=* works best for v5
+    const { data } = await strapiFetch<StrapiEntity<HeroSection>>(
+      '/hero-section?populate=*'
     );
     if (!data) {
       console.warn('Hero Section not found in Strapi. Using fallback values.');

@@ -51,11 +51,8 @@ export async function strapiFetch<T>(
       ...options,
       headers,
       signal: controller.signal,
-      // In development, always fetch fresh data (no cache)
-      // In production, cache for 1 hour
-      ...(process.env.NODE_ENV === 'development' 
-        ? { cache: 'no-store' } 
-        : { next: { revalidate: 3600 } }),
+      // Always fetch fresh data - no caching (since page has revalidate=0)
+      cache: 'no-store',
     });
     
     clearTimeout(timeoutId);
