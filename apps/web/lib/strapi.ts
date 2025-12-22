@@ -98,18 +98,10 @@ export async function strapiFetch<T>(
     const responseData = await response.json();
     console.log(`[strapiFetch] Successfully fetched ${endpoint}`);
     
-    // Strapi v5 single types return fields directly, but our code expects v4 format with attributes
-    // Normalize the response to match expected structure
-    if (responseData.data && !responseData.data.attributes) {
-      // v5 format: data has fields directly, wrap them in attributes
-      const { id, documentId, ...attributes } = responseData.data;
-      responseData.data = {
-        id: id || documentId || 0,
-        attributes: attributes,
-      };
-    }
-    
-    return responseData;
+    // Import and use the adapter for proper normalization
+    // This handles Strapi v5 → v4 format conversion
+    const { normalizeStrapiV5Response } = await import('./strapi-adapters');
+    return normalizeStrapiV5Response(responseData);
   } catch (error: any) {
     // Log detailed error for debugging
     console.error(`[strapiFetch] Error fetching ${url}:`, {
