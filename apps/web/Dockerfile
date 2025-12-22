@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 FROM node:20-alpine AS base
 
 # Install dependencies only when needed
@@ -7,13 +8,20 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-# Install dependencies - use npm ci if package-lock.json exists, otherwise npm install
-RUN if [ -f package-lock.json ]; then npm ci --legacy-peer-deps; else npm install --legacy-peer-deps; fi
+
+# Install dependencies with BuildKit cache mount for faster rebuilds
+# Cache mount persists npm cache between builds - HUGE time saver!
+RUN --mount=type=cache,target=/root/.npm \
+    if [ -f package-lock.json ]; then npm ci --legacy-peer-deps --prefer-offline --no-audit; else npm install --legacy-peer-deps --prefer-offline --no-audit; fi
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+# Copy node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
+
+# Copy source code
 COPY . .
 
 # Set environment for build
@@ -27,7 +35,10 @@ ENV NEXT_PUBLIC_STRAPI_URL=${NEXT_PUBLIC_STRAPI_URL}
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
 
 # Build Next.js with standalone output
-RUN npm run build
+# Use cache mount for Next.js build cache - speeds up incremental builds significantly
+# This cache persists between builds, making subsequent builds much faster
+RUN --mount=type=cache,target=/app/.next/cache \
+    npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
