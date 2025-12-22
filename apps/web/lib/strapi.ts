@@ -134,8 +134,7 @@ export async function strapiPublicFetch<T>(
         ...options.headers,
       },
       signal: controller.signal,
-      cache: 'no-store', // Always fetch fresh data
-      next: { revalidate: 0 }, // Next.js: no revalidation
+      cache: 'no-store', // Always fetch fresh data (no-store already handles revalidation)
     });
     
     clearTimeout(timeoutId);
