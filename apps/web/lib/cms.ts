@@ -417,7 +417,7 @@ export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection>
   try {
     // Use strapiFetch with API token to access draft content
     const { data } = await strapiFetch<StrapiEntity<ClientLogosSection>>(
-      '/client-logos?populate[row1Logos][populate]=*&populate[row2Logos][populate]=*'
+      '/client-logos-section?populate[row1Logos][populate]=*&populate[row2Logos][populate]=*'
     );
     
     if (!data) {
