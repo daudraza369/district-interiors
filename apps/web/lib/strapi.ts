@@ -32,15 +32,17 @@ export async function strapiFetch<T>(
   options: RequestInit = {}
 ): Promise<StrapiResponse<T>> {
   // Build URL - add publicationState=preview to allow fetching draft content with API token
-  const urlParams = new URL(endpoint);
-  // If endpoint already has query params, preserve them; otherwise add publicationState
-  if (STRAPI_API_TOKEN && !urlParams.search.includes('publicationState')) {
+  let finalEndpoint = endpoint;
+  if (STRAPI_API_TOKEN && !endpoint.includes('publicationState')) {
     // With API token, we can fetch draft content using publicationState=preview
-    urlParams.searchParams.set('publicationState', 'preview');
+    // This allows fetching both published and draft content
+    const separator = endpoint.includes('?') ? '&' : '?';
+    finalEndpoint = `${endpoint}${separator}publicationState=preview`;
   }
-  const url = `${STRAPI_URL}/api${urlParams.pathname}${urlParams.search}`;
+  const url = `${STRAPI_URL}/api${finalEndpoint}`;
   
   console.log(`[strapiFetch] Called with endpoint: ${endpoint}`);
+  console.log(`[strapiFetch] Final endpoint: ${finalEndpoint}`);
   console.log(`[strapiFetch] Final URL: ${url}`);
   console.log(`[strapiFetch] STRAPI_URL: ${STRAPI_URL}`);
   console.log(`[strapiFetch] Has API token: ${!!STRAPI_API_TOKEN}`);
