@@ -32,6 +32,10 @@ export async function strapiFetch<T>(
 ): Promise<StrapiResponse<T>> {
   const url = `${STRAPI_URL}/api${endpoint}`;
   
+  console.log(`[strapiFetch] Called with endpoint: ${endpoint}`);
+  console.log(`[strapiFetch] STRAPI_URL: ${STRAPI_URL}`);
+  console.log(`[strapiFetch] Has API token: ${!!STRAPI_API_TOKEN}`);
+  
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...options.headers,

@@ -415,18 +415,24 @@ export async function getDiscountByCode(code: string): Promise<StrapiEntity<Disc
 // Hero Section
 export async function getHeroSection(): Promise<StrapiEntity<HeroSection> | null> {
   try {
+    console.log('[getHeroSection] Fetching hero section from Strapi...');
     // Use server-side fetch with API token for Strapi v5
     // Simple populate=* works best for v5
     const { data } = await strapiFetch<StrapiEntity<HeroSection>>(
       '/hero-section?populate=*'
     );
     if (!data) {
-      console.warn('Hero Section not found in Strapi. Using fallback values.');
+      console.warn('[getHeroSection] Hero Section not found in Strapi. Using fallback values.');
       return null;
     }
+    console.log('[getHeroSection] Successfully fetched hero section:', {
+      hasData: !!data,
+      hasAttributes: !!data?.attributes,
+      title: data?.attributes?.title,
+    });
     return data;
   } catch (error) {
-    console.warn('Error fetching Hero Section:', error);
+    console.error('[getHeroSection] Error fetching Hero Section:', error);
     return null;
   }
 }
