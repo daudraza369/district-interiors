@@ -3,6 +3,8 @@
  * Never expose API token to client
  */
 
+import { normalizeStrapiV5Response } from './strapi-adapters';
+
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
@@ -98,9 +100,8 @@ export async function strapiFetch<T>(
     const responseData = await response.json();
     console.log(`[strapiFetch] Successfully fetched ${endpoint}`);
     
-    // Import and use the adapter for proper normalization
-    // This handles Strapi v5 → v4 format conversion
-    const { normalizeStrapiV5Response } = await import('./strapi-adapters');
+    // Normalize Strapi v5 response to v4-compatible format
+    // This adapter ensures backward compatibility while supporting Strapi v5
     return normalizeStrapiV5Response(responseData);
   } catch (error: any) {
     // Log detailed error for debugging
