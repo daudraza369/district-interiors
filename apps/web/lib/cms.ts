@@ -415,18 +415,15 @@ export async function getTestimonials(): Promise<StrapiEntity<Testimonial>[]> {
 // Client logos section
 export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection> | null> {
   try {
-    // strapiPublicFetch already adds /api prefix, so use /client-logos not /api/client-logos
-    const response = await strapiPublicFetch<StrapiEntity<ClientLogosSection>>(
-      '/client-logos'
+    // Use strapiFetch with API token to access draft content
+    const { data } = await strapiFetch<StrapiEntity<ClientLogosSection>>(
+      '/client-logos?populate[row1Logos][populate]=*&populate[row2Logos][populate]=*'
     );
     
-    // strapiPublicFetch returns { data: T }, so response.data is StrapiEntity<ClientLogosSection>
-    if (!response || !response.data) {
+    if (!data) {
       console.warn('Client Logos Section not found in Strapi. Using fallback values.');
       return null;
     }
-    
-    const data = response.data;
     
     // Sort logos by displayOrder for both rows
     if (data.attributes && data.attributes.row1Logos && Array.isArray(data.attributes.row1Logos)) {

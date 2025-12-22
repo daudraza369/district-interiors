@@ -1,0 +1,137 @@
+# Instructions to Create Client Logos Content Type in Strapi
+
+## Option 1: Via Strapi Admin Panel (Easiest)
+
+1. Go to Strapi Admin Panel: https://admin.districtflowers.com
+2. Navigate to Content-Type Builder
+3. Create a new Component:
+   - Click "Create new component"
+   - Component name: `client-logo-item`
+   - Category: `default` (or create "client-logos" category)
+   - Add fields:
+     * `clientName` - Text (required)
+     * `logo` - Media (single, required, type: Images)
+     * `websiteUrl` - Text (optional)
+     * `displayOrder` - Integer (default: 0)
+   - Save
+
+4. Create a new Single Type:
+   - Click "Create new single type"
+   - Name: `client-logos`
+   - Add fields:
+     * `title` - Text (required, default: "Trusted By Leading Brands")
+     * `subtitle` - Text (optional)
+     * `showRow1` - Boolean (default: true)
+     * `showRow2` - Boolean (default: true)
+     * `row1Logos` - Component: client-logo-item (repeatable)
+     * `row2Logos` - Component: client-logo-item (repeatable)
+   - Save
+
+5. Set API Permissions:
+   - Go to Settings > Users & Permissions Plugin > Roles > Public
+   - Enable "find" and "findOne" for Client Logos
+   - Go to Settings > API Tokens
+   - Ensure your API token has permissions for Client Logos
+
+6. Then run: node populate-client-logos.js
+
+## Option 2: Via SSH (Direct Schema Creation)
+
+Run these commands on your server (similar to hero-section):
+
+```bash
+# Get the container ID
+CONTAINER_ID=$(docker ps | grep strapi | awk '{print $1}')
+
+# Create component directory
+docker exec $CONTAINER_ID mkdir -p /opt/app/src/components/client-logo-item
+
+# Create component schema
+docker exec $CONTAINER_ID sh -c 'cat > /opt/app/src/components/client-logo-item/schema.json << "EOF"
+{
+  "collectionName": "components_client_logo_items",
+  "info": {
+    "displayName": "Client Logo Item",
+    "description": "A client logo with name and optional website"
+  },
+  "options": {},
+  "attributes": {
+    "clientName": {
+      "type": "string",
+      "required": true
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "websiteUrl": {
+      "type": "string",
+      "required": false
+    },
+    "displayOrder": {
+      "type": "integer",
+      "default": 0,
+      "required": false
+    }
+  }
+}
+EOF'
+
+# Create single type directory
+docker exec $CONTAINER_ID mkdir -p /opt/app/src/api/client-logos/content-types/client-logos
+
+# Create single type schema
+docker exec $CONTAINER_ID sh -c 'cat > /opt/app/src/api/client-logos/content-types/client-logos/schema.json << "EOF"
+{
+  "kind": "singleType",
+  "collectionName": "client_logos",
+  "info": {
+    "singularName": "client-logos",
+    "pluralName": "client-logos",
+    "displayName": "Client Logos Section"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Trusted By Leading Brands"
+    },
+    "subtitle": {
+      "type": "text",
+      "required": false
+    },
+    "showRow1": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "showRow2": {
+      "type": "boolean",
+      "default": true,
+      "required": false
+    },
+    "row1Logos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "client-logo-item.client-logo-item"
+    },
+    "row2Logos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "client-logo-item.client-logo-item"
+    }
+  }
+}
+EOF'
+
+# Restart Strapi container to load new content type
+docker restart $CONTAINER_ID
+```
+
+After restart, run: node populate-client-logos.js
+
