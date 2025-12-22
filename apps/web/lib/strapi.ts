@@ -102,7 +102,8 @@ export async function strapiFetch<T>(
     
     // Normalize Strapi v5 response to v4-compatible format
     // This adapter ensures backward compatibility while supporting Strapi v5
-    return normalizeStrapiV5Response(responseData);
+    const normalized = normalizeStrapiV5Response(responseData);
+    return normalized as StrapiResponse<T>;
   } catch (error: any) {
     // Log detailed error for debugging
     console.error(`[strapiFetch] Error fetching ${url}:`, {
