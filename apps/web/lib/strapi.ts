@@ -25,14 +25,23 @@ export interface StrapiEntity {
 
 /**
  * Server-side Strapi API client with authentication
+ * Can fetch both published and draft content when API token is provided
  */
 export async function strapiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<StrapiResponse<T>> {
-  const url = `${STRAPI_URL}/api${endpoint}`;
+  // Build URL - add publicationState=preview to allow fetching draft content with API token
+  const urlParams = new URL(endpoint);
+  // If endpoint already has query params, preserve them; otherwise add publicationState
+  if (STRAPI_API_TOKEN && !urlParams.search.includes('publicationState')) {
+    // With API token, we can fetch draft content using publicationState=preview
+    urlParams.searchParams.set('publicationState', 'preview');
+  }
+  const url = `${STRAPI_URL}/api${urlParams.pathname}${urlParams.search}`;
   
   console.log(`[strapiFetch] Called with endpoint: ${endpoint}`);
+  console.log(`[strapiFetch] Final URL: ${url}`);
   console.log(`[strapiFetch] STRAPI_URL: ${STRAPI_URL}`);
   console.log(`[strapiFetch] Has API token: ${!!STRAPI_API_TOKEN}`);
   
@@ -41,7 +50,7 @@ export async function strapiFetch<T>(
     ...options.headers,
   };
 
-  // Add API token for server-side requests
+  // Add API token for server-side requests (allows fetching draft content)
   if (STRAPI_API_TOKEN) {
     (headers as Record<string, string>)['Authorization'] = `Bearer ${STRAPI_API_TOKEN}`;
   }
