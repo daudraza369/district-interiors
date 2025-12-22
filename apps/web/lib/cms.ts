@@ -239,34 +239,89 @@ export interface StatsSection {
   stats: StatItem[];
 }
 
-// Helper to get image URL
-export function getImageUrl(image?: { data: StrapiEntity<{ url: string }> }): string | null {
-  if (!image?.data) return null;
+// Helper to get image URL (handles both Strapi v4 and v5 formats)
+export function getImageUrl(image?: { data?: StrapiEntity<{ url: string }> } | { url?: string } | null): string | null {
+  if (!image) return null;
+  
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  return `${baseUrl}${image.data.attributes.url}`;
-}
-
-export function getImageUrlArray(images?: { data: StrapiEntity<{ url: string }>[] }): string[] {
-  if (!images?.data) return [];
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  return images.data.map(img => `${baseUrl}${img.attributes.url}`);
-}
-
-// Helper to get media URL (for images and videos)
-export function getMediaUrl(media?: { data: StrapiEntity<{ url: string; mime?: string }> | StrapiEntity<{ url: string; mime?: string }>[] }): string | null {
-  if (!media?.data) return null;
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  if (Array.isArray(media.data)) {
-    return media.data.length > 0 ? `${baseUrl}${media.data[0].attributes.url}` : null;
+  
+  // Strapi v5 format: image is direct object with url property
+  if ('url' in image && image.url) {
+    return `${baseUrl}${image.url}`;
   }
-  return `${baseUrl}${media.data.attributes.url}`;
+  
+  // Strapi v4 format: image.data.attributes.url
+  if (image.data?.attributes?.url) {
+    return `${baseUrl}${image.data.attributes.url}`;
+  }
+  
+  return null;
 }
 
-// Helper to check if media is video
-export function isVideo(media?: { data: StrapiEntity<{ mime?: string }> | StrapiEntity<{ mime?: string }>[] }): boolean {
-  if (!media?.data) return false;
-  const mime = Array.isArray(media.data) ? media.data[0]?.attributes?.mime : media.data.attributes?.mime;
-  return mime?.startsWith('video/') || false;
+export function getImageUrlArray(images?: { data?: StrapiEntity<{ url: string }>[] } | { url?: string }[] | null): string[] {
+  if (!images) return [];
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  
+  // Strapi v5 format: array of objects with url property
+  if (Array.isArray(images)) {
+    return images.map(img => 'url' in img && img.url ? `${baseUrl}${img.url}` : '').filter(Boolean);
+  }
+  
+  // Strapi v4 format: images.data array
+  if (images.data && Array.isArray(images.data)) {
+    return images.data.map(img => `${baseUrl}${img.attributes.url}`);
+  }
+  
+  return [];
+}
+
+// Helper to get media URL (for images and videos, handles both v4 and v5)
+export function getMediaUrl(media?: { data?: StrapiEntity<{ url: string; mime?: string }> | StrapiEntity<{ url: string; mime?: string }>[] } | { url?: string; mime?: string } | { url?: string; mime?: string }[] | null): string | null {
+  if (!media) return null;
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  
+  // Strapi v5 format: direct object or array with url property
+  if (Array.isArray(media)) {
+    return media.length > 0 && 'url' in media[0] && media[0].url ? `${baseUrl}${media[0].url}` : null;
+  }
+  
+  if ('url' in media && media.url) {
+    return `${baseUrl}${media.url}`;
+  }
+  
+  // Strapi v4 format: media.data.attributes.url
+  if (media.data) {
+    if (Array.isArray(media.data)) {
+      return media.data.length > 0 && media.data[0].attributes?.url ? `${baseUrl}${media.data[0].attributes.url}` : null;
+    }
+    if (media.data.attributes?.url) {
+      return `${baseUrl}${media.data.attributes.url}`;
+    }
+  }
+  
+  return null;
+}
+
+// Helper to check if media is video (handles both v4 and v5)
+export function isVideo(media?: { data?: StrapiEntity<{ mime?: string }> | StrapiEntity<{ mime?: string }>[] } | { mime?: string } | { mime?: string }[] | null): boolean {
+  if (!media) return false;
+  
+  // Strapi v5 format: direct object with mime property
+  if (Array.isArray(media)) {
+    return media.length > 0 && 'mime' in media[0] ? media[0].mime?.startsWith('video/') || false : false;
+  }
+  
+  if ('mime' in media && media.mime) {
+    return media.mime.startsWith('video/');
+  }
+  
+  // Strapi v4 format: media.data.attributes.mime
+  if (media.data) {
+    const mime = Array.isArray(media.data) ? media.data[0]?.attributes?.mime : media.data.attributes?.mime;
+    return mime?.startsWith('video/') || false;
+  }
+  
+  return false;
 }
 
 // Homepage sections
