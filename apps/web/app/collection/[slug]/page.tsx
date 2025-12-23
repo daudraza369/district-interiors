@@ -7,8 +7,9 @@ import { notFound } from 'next/navigation';
 // Force dynamic rendering since we fetch from Strapi
 export const dynamic = 'force-dynamic';
 
-export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
-  const product = await getProductBySlug(params.slug);
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
