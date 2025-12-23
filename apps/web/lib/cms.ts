@@ -74,7 +74,8 @@ export interface Testimonial {
 
 export interface ClientLogoItem {
   clientName: string;
-  logo: { data: StrapiEntity<{ url: string; alternativeText?: string }> };
+  // Strapi v5 format: media objects have url directly, not wrapped in data
+  logo?: { url: string; alternativeText?: string; mime?: string; [key: string]: any };
   websiteUrl?: string;
   displayOrder: number;
 }
@@ -416,13 +417,14 @@ export async function getTestimonials(): Promise<StrapiEntity<Testimonial>[]> {
 // Client logos section
 export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection> | null> {
   try {
-    // Use strapiFetch with API token to access draft content
-    const { data } = await strapiFetch<StrapiEntity<ClientLogosSection>>(
-      '/client-logos-section?populate[row1Logos][populate]=*&populate[row2Logos][populate]=*'
+    console.log('[getClientLogos] Fetching client logos section from Strapi...');
+    // Use strapiPublicFetch like other sections - this fetches published content without auth
+    const { data } = await strapiPublicFetch<StrapiEntity<ClientLogosSection>>(
+      '/client-logos-section?populate[row1Logos][populate]=*&populate[row2Logos][populate]=*&publicationState=live'
     );
     
     if (!data) {
-      console.warn('Client Logos Section not found in Strapi. Using fallback values.');
+      console.warn('[getClientLogos] Client Logos Section not found in Strapi. Using fallback values.');
       return null;
     }
     
@@ -434,6 +436,7 @@ export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection>
       data.attributes.row2Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
     }
     
+    console.log('[getClientLogos] Successfully fetched client logos section');
     return data;
   } catch (error) {
     console.error('[getClientLogos] Error:', error);
