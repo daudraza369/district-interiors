@@ -241,7 +241,7 @@ export function CartPageClient({ allProducts, shippingOptions }: CartPageClientP
                         <SelectContent>
                           {shippingOptions.map((option) => (
                             <SelectItem key={option.id} value={option.id.toString()}>
-                              {option.attributes.name} - {option.attributes.currency} {option.attributes.price.toLocaleString()}
+                              {option.attributes.name} - {option.attributes.currency || 'SAR'} {option.attributes.price.toLocaleString()}
                             </SelectItem>
                           ))}
                         </SelectContent>
