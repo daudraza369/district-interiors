@@ -155,7 +155,8 @@ export function CartPageClient({ allProducts, shippingOptions }: CartPageClientP
                 {cartProducts.map(({ product, qty }) => {
                   const attrs = product.attributes;
                   const firstImage = attrs.images?.data?.[0];
-                  const imageUrl = firstImage ? getImageUrl({ data: firstImage }) : null;
+                  // firstImage is already in Strapi format { attributes: { url } }, pass it directly
+                  const imageUrl = firstImage ? getImageUrl(firstImage) : null;
 
                   return (
                     <div key={product.id} className="bg-stone/10 p-6 rounded-sm flex gap-6">
