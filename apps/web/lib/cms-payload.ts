@@ -1,9 +1,12 @@
 /**
  * Payload CMS client - replaces Strapi
  * Direct database queries with full type safety!
+ * 
+ * SERVER-ONLY: This module must never be imported in client components
  */
 
-import { getPayloadClient, getImageUrl, getMediaUrl } from './payload-client';
+import 'server-only';
+import { getPayloadClient } from './payload-client';
 
 // Re-export types for compatibility
 export interface HeroSection {
@@ -264,6 +267,5 @@ export async function getDualCTA(): Promise<PayloadResponse<DualCTA> | null> {
   }
 }
 
-// Re-export helpers for compatibility
-export { getImageUrl, getMediaUrl };
+// Media helpers are exported from media-utils.ts for client-safe usage
 

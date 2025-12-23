@@ -22,6 +22,10 @@ const nextConfig = {
         dns: false,
         tls: false,
         'pg-native': false,
+        'worker_threads': false,
+        'readline': false,
+        'node:assert': false,
+        'node:async_hooks': false,
       };
     }
     return config;

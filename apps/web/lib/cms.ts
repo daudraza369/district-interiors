@@ -1,18 +1,41 @@
 /**
  * Typed CMS client - Now using Payload CMS!
  * Direct database queries with full type safety
+ * 
+ * NOTE: This file re-exports types (safe for client) and server functions (server-only)
  */
 
-// Import Payload functions (server-side only)
-import * as payloadCms from './cms-payload';
+// Re-export all types (client-safe)
+export * from './cms-types';
 
-// Types
-export interface StrapiEntity<T = any> {
-  id: number;
-  attributes: T;
-}
+// Re-export client-safe media utilities
+export { getImageUrl, getMediaUrl, isVideo } from './media-utils';
 
-export interface Category {
+// Server-only imports (dynamic to prevent client bundling)
+let payloadCms: any = null;
+const getPayloadFunctions = () => {
+  if (typeof window !== 'undefined') {
+    throw new Error('CMS functions can only be called on the server');
+  }
+  if (!payloadCms) {
+    payloadCms = require('./cms-payload');
+  }
+  return payloadCms;
+};
+
+// Strapi imports (will be removed later, keeping for compatibility during migration)
+let strapiFetch: any = null;
+let strapiPublicFetch: any = null;
+const getStrapiFunctions = () => {
+  if (typeof window !== 'undefined') {
+    throw new Error('Strapi functions can only be called on the server');
+  }
+  // Strapi removed - return null functions that return empty data
+  return {
+    strapiFetch: async () => ({ data: [] }),
+    strapiPublicFetch: async () => ({ data: null }),
+  };
+};
   name: string;
   slug: string;
   description?: string;
@@ -410,12 +433,14 @@ export async function getHomePageLayout(): Promise<StrapiEntity<HomePageLayout> 
 
 // Why Choose Us - Now using Payload!
 export async function getWhyChooseUs() {
+  const payloadCms = getPayloadFunctions();
   return payloadCms.getWhyChooseUs();
 }
 
 // Collection Preview
 export async function getCollectionPreview(): Promise<StrapiEntity<CollectionPreview> | null> {
   try {
+    const { strapiPublicFetch } = getStrapiFunctions();
     const { data } = await strapiPublicFetch<StrapiEntity<CollectionPreview>>(
       '/collection-preview?populate[collections][populate]=image&publicationState=live'
     );
@@ -436,12 +461,14 @@ export async function getCollectionPreview(): Promise<StrapiEntity<CollectionPre
 
 // Services Section - Now using Payload!
 export async function getServicesSection() {
+  const payloadCms = getPayloadFunctions();
   return payloadCms.getServicesSection();
 }
 
 // About Snapshot
 export async function getAboutSnapshot(): Promise<StrapiEntity<AboutSnapshot> | null> {
   try {
+    const { strapiPublicFetch } = getStrapiFunctions();
     const { data } = await strapiPublicFetch<StrapiEntity<AboutSnapshot>>(
       '/about-snapshot?populate=image&publicationState=live'
     );
@@ -458,11 +485,13 @@ export async function getAboutSnapshot(): Promise<StrapiEntity<AboutSnapshot> | 
 
 // Dual CTA - Now using Payload!
 export async function getDualCTA() {
+  const payloadCms = getPayloadFunctions();
   return payloadCms.getDualCTA();
 }
 
 // Stats Section - Now using Payload!
 export async function getStatsSection() {
+  const payloadCms = getPayloadFunctions();
   return payloadCms.getStatsSection();
 }
 

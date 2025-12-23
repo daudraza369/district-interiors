@@ -1,8 +1,11 @@
 /**
  * Payload CMS client helper
  * Replaces Strapi - direct database queries with full type safety!
+ * 
+ * SERVER-ONLY: This module must never be imported in client components
  */
 
+import 'server-only';
 import { getPayload as getPayloadClient } from 'payload';
 import config from '../payload.config';
 
