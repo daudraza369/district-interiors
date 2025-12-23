@@ -103,6 +103,7 @@ export interface ShippingOption {
   name: string;
   description?: string;
   price: number;
+  currency?: string;
   estimatedDays?: number;
   displayOrder: number;
 }
