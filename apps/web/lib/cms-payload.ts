@@ -6,7 +6,7 @@
  */
 
 import 'server-only';
-import { getPayload as getPayloadClient } from './payload-client';
+import { getPayload } from './payload-client';
 
 // Re-export types for compatibility
 export interface HeroSection {
