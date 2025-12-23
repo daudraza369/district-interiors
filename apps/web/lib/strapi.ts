@@ -166,7 +166,11 @@ export async function strapiPublicFetch<T>(
       throw new Error(`Strapi API error: ${response.statusText}`);
     }
 
-    return response.json();
+    const responseData = await response.json();
+    
+    // Normalize Strapi v5 response to v4-compatible format (same as strapiFetch)
+    const normalized = normalizeStrapiV5Response(responseData);
+    return normalized as StrapiResponse<T>;
   } catch (error: any) {
     // Handle timeout and connection errors gracefully
     if (error.name === 'AbortError' || error.message?.includes('fetch failed') || error.code === 'ECONNREFUSED' || error.message?.includes('timeout') || error.code === 'ETIMEDOUT') {

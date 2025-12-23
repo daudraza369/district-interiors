@@ -139,10 +139,11 @@ export interface HeroSection {
   secondaryButtonAction?: 'link' | 'scroll';
   secondaryButtonLink?: string;
   secondaryButtonScrollTarget?: string;
-  backgroundImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
-  heroImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }>[] };
-  beforeImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
-  afterImage?: { data: StrapiEntity<{ url: string; alternativeText?: string; mime?: string }> };
+  // Strapi v5 format: media objects have url directly, not wrapped in data
+  backgroundImage?: { url: string; alternativeText?: string; mime?: string; [key: string]: any };
+  heroImage?: { url: string; alternativeText?: string; mime?: string; [key: string]: any }[];
+  beforeImage?: { url: string; alternativeText?: string; mime?: string; [key: string]: any };
+  afterImage?: { url: string; alternativeText?: string; mime?: string; [key: string]: any };
 }
 
 // Section Config
@@ -468,10 +469,10 @@ export async function getDiscountByCode(code: string): Promise<StrapiEntity<Disc
 export async function getHeroSection(): Promise<StrapiEntity<HeroSection> | null> {
   try {
     console.log('[getHeroSection] Fetching hero section from Strapi...');
-    // Use server-side fetch with API token for Strapi v5
-    // Simple populate=* works best for v5
-    const { data } = await strapiFetch<StrapiEntity<HeroSection>>(
-      '/hero-section?populate=*'
+    // Use strapiPublicFetch like other sections - this fetches published content without auth
+    // This ensures that when content is published in Strapi, it shows up on the frontend
+    const { data } = await strapiPublicFetch<StrapiEntity<HeroSection>>(
+      '/hero-section?populate=*&publicationState=live'
     );
     if (!data) {
       console.warn('[getHeroSection] Hero Section not found in Strapi. Using fallback values.');
