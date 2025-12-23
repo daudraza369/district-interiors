@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-import { getImageUrl } from '@/lib/cms';
+import { getImageUrl } from '@/lib/media-utils';
 import type { ClientLogosSection as ClientLogosSectionType } from '@/lib/cms';
 
 interface ClientLogosSectionProps {

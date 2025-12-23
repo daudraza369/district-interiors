@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { getImageUrl, getMediaUrl, isVideo } from '@/lib/cms';
+import { getImageUrl, getMediaUrl, isVideo } from '@/lib/media-utils';
 import type { HeroSection as HeroSectionType } from '@/lib/cms';
 import { BeforeAfterSlider } from '@/components/ui/before-after-slider';
 

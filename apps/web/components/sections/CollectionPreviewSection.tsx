@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { getImageUrl } from '@/lib/cms';
+import { getImageUrl } from '@/lib/media-utils';
 import type { CollectionPreview as CollectionPreviewType } from '@/lib/cms';
 
 interface CollectionPreviewSectionProps {

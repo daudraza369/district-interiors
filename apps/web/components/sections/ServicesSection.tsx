@@ -5,7 +5,7 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { getImageUrl } from '@/lib/cms';
+import { getImageUrl } from '@/lib/media-utils';
 import type { ServicesSection as ServicesSectionType } from '@/lib/cms';
 
 interface ServicesSectionProps {

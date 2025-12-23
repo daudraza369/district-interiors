@@ -3,9 +3,8 @@
  * Direct database queries with full type safety
  */
 
-// Import Payload functions
+// Import Payload functions (server-side only)
 import * as payloadCms from './cms-payload';
-export { getImageUrl, getMediaUrl } from './payload';
 
 // Types
 export interface StrapiEntity<T = any> {
