@@ -64,21 +64,22 @@ The frontend is already resilient and handles missing fields:
 
 ---
 
-## 🤖 Option B: Auto-Populate via API Script (Automated)
+## 🤖 Option B: Auto-Populate Title/Subtitle via API Script (Optional)
 
-I'll create a script that populates content via API (this works because we're only creating/updating content, not schema).
+**Note:** This script CANNOT upload logo images - you'll need to add those manually in Strapi Admin. But it can set up the title/subtitle structure.
 
 **Run this locally:**
 ```bash
-node populate-client-logos-api.js
+node populate-client-logos-api-only.js
 ```
 
 This script will:
-- ✅ Check if `row2Logos` field exists (gracefully handles if missing)
-- ✅ Add logos to `row1Logos` if empty
-- ✅ Add logos to `row2Logos` if field exists and is empty
 - ✅ Update title/subtitle
-- ✅ Publish the content
+- ✅ Set showRow1/showRow2 flags
+- ⚠️ Cannot add logos with images (you need to do this manually in Strapi Admin)
+- ✅ Try to publish the content
+
+**After running:** You still need to manually add logo images via Strapi Admin UI.
 
 ---
 
