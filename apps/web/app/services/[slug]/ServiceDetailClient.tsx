@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { StrapiEntity, Service, getImageUrl } from '@/lib/cms';
+import type { StrapiEntity, Service } from '@/lib/cms-types';
+import { getImageUrl } from '@/lib/media-utils';
 
 interface ServiceDetailClientProps {
   service: StrapiEntity<Service>;

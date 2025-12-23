@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { StrapiEntity, Product, getImageUrl, getImageUrlArray } from '@/lib/cms';
+import type { StrapiEntity, Product } from '@/lib/cms-types';
+import { getImageUrl, getImageUrlArray } from '@/lib/media-utils';
 import { parseCart, serializeCart } from '@/lib/cart';
 import { ShoppingCart } from 'lucide-react';
 

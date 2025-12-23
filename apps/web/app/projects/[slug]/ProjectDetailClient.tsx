@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
-import { StrapiEntity, Project, getImageUrl, getImageUrlArray } from '@/lib/cms';
+import type { StrapiEntity, Project } from '@/lib/cms-types';
+import { getImageUrl, getImageUrlArray } from '@/lib/media-utils';
 
 interface ProjectDetailClientProps {
   project: StrapiEntity<Project>;

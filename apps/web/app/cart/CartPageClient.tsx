@@ -11,7 +11,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Trash2, ShoppingCart, ArrowRight } from 'lucide-react';
 import { parseCart, serializeCart, CartItem } from '@/lib/cart';
-import { StrapiEntity, Product, ShippingOption, getImageUrl } from '@/lib/cms';
+import type { StrapiEntity, Product, ShippingOption } from '@/lib/cms-types';
+import { getImageUrl } from '@/lib/media-utils';
 
 interface CartPageClientProps {
   allProducts: StrapiEntity<Product>[];
