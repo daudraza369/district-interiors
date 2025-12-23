@@ -108,7 +108,7 @@ interface PayloadResponse<T> {
 // Hero Section
 export async function getHeroSection(): Promise<PayloadResponse<HeroSection> | null> {
   try {
-    const payload = await getPayloadClient();
+    const payload = await getPayload();
     const result = await payload.find({
       collection: 'hero-section',
       limit: 1,
@@ -135,7 +135,7 @@ export async function getHeroSection(): Promise<PayloadResponse<HeroSection> | n
 // Client Logos Section
 export async function getClientLogos(): Promise<PayloadResponse<ClientLogosSection> | null> {
   try {
-    const payload = await getPayloadClient();
+    const payload = await getPayload();
     const result = await payload.find({
       collection: 'client-logos-section',
       limit: 1,
@@ -162,7 +162,7 @@ export async function getClientLogos(): Promise<PayloadResponse<ClientLogosSecti
 // Why Choose Us
 export async function getWhyChooseUs(): Promise<PayloadResponse<WhyChooseUs> | null> {
   try {
-    const payload = await getPayloadClient();
+    const payload = await getPayload();
     const result = await payload.find({
       collection: 'why-choose-us',
       limit: 1,
@@ -189,7 +189,7 @@ export async function getWhyChooseUs(): Promise<PayloadResponse<WhyChooseUs> | n
 // Services Section
 export async function getServicesSection(): Promise<PayloadResponse<ServicesSection> | null> {
   try {
-    const payload = await getPayloadClient();
+    const payload = await getPayload();
     const result = await payload.find({
       collection: 'services-section',
       limit: 1,
@@ -216,7 +216,7 @@ export async function getServicesSection(): Promise<PayloadResponse<ServicesSect
 // Stats Section
 export async function getStatsSection(): Promise<PayloadResponse<StatsSection> | null> {
   try {
-    const payload = await getPayloadClient();
+    const payload = await getPayload();
     const result = await payload.find({
       collection: 'stats-section',
       limit: 1,
@@ -243,7 +243,7 @@ export async function getStatsSection(): Promise<PayloadResponse<StatsSection> |
 // Dual CTA
 export async function getDualCTA(): Promise<PayloadResponse<DualCTA> | null> {
   try {
-    const payload = await getPayloadClient();
+    const payload = await getPayload();
     const result = await payload.find({
       collection: 'dual-cta',
       limit: 1,
