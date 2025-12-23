@@ -42,11 +42,11 @@ export function ClientLogosSection({ data }: ClientLogosSectionProps) {
   };
 
   // Get logos for each row (with fallback to defaults if no Strapi data)
-  const row1Clients = data && data.row1Logos && data.row1Logos.length > 0
+  const row1Clients: ClientItem[] = data && data.row1Logos && data.row1Logos.length > 0
     ? convertLogosToClients(data.row1Logos)
     : defaultClients;
   
-  const row2Clients = data && data.row2Logos && data.row2Logos.length > 0
+  const row2Clients: ClientItem[] = data && data.row2Logos && data.row2Logos.length > 0
     ? convertLogosToClients(data.row2Logos)
     : defaultClients;
 

@@ -53,3 +53,5 @@ If you want automatic deployments, you can set up:
    - Configure auto-deploy in Coolify settings
    - See: https://next.coolify.io/docs/applications/ci-cd/github/auto-deploy
 
+
+

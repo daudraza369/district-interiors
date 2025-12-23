@@ -124,7 +124,7 @@ export function HeroSection({ data }: HeroSectionProps) {
                   lineHeight: 1,
                   marginBottom: '1.5rem',
                   fontWeight: 500, // Kalice-Trial Medium
-                  color: '#E0E8C0',
+                  color: 'white',
                 }}
               >
                 {title}

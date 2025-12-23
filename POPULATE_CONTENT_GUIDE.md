@@ -124,3 +124,8 @@ Go to **https://admin.districtflowers.com/admin** and manually create each conte
 ---
 
 **Note**: The automated script will work once Coolify redeploys the CMS with the new PUT handlers. Check deployment status in Coolify first!
+
+
+
+
+

@@ -3,15 +3,138 @@
 @tailwind utilities;
 
 /* District Interiors Brand Fonts */
-/* Kalice-Trial Font Family - use your exact Medium file */
+/* Kalice-Trial Font Family - Complete font family with all weights and styles */
 @font-face {
   font-family: 'Kalice-Trial';
-  src: url('/fonts/Kalice-Trial-Medium.woff2') format('woff2');
+  src: url('/fonts/Kalice-Trial-Regular.eot');
+  src: local('Kalice-Trial Regular'), local('Kalice-Trial-Regular'),
+      url('/fonts/Kalice-Trial-Regular.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-Regular.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-Regular.woff') format('woff'),
+      url('/fonts/Kalice-Trial-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-Medium.eot');
+  src: local('Kalice-Trial Medium'), local('Kalice-Trial-Medium'),
+      url('/fonts/Kalice-Trial-Medium.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-Medium.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-Medium.woff') format('woff'),
+      url('/fonts/Kalice-Trial-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-Bold.eot');
+  src: local('Kalice-Trial Bold'), local('Kalice-Trial-Bold'),
+      url('/fonts/Kalice-Trial-Bold.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-Bold.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-Bold.woff') format('woff'),
+      url('/fonts/Kalice-Trial-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-ExtraBold.eot');
+  src: local('Kalice-Trial ExtraBold'), local('Kalice-Trial-ExtraBold'),
+      url('/fonts/Kalice-Trial-ExtraBold.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-ExtraBold.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-ExtraBold.woff') format('woff'),
+      url('/fonts/Kalice-Trial-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-Black.eot');
+  src: local('Kalice-Trial Black'), local('Kalice-Trial-Black'),
+      url('/fonts/Kalice-Trial-Black.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-Black.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-Black.woff') format('woff'),
+      url('/fonts/Kalice-Trial-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-Italic.eot');
+  src: local('Kalice-Trial Italic'), local('Kalice-Trial-Italic'),
+      url('/fonts/Kalice-Trial-Italic.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-Italic.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-Italic.woff') format('woff'),
+      url('/fonts/Kalice-Trial-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-MediumItalic.eot');
+  src: local('Kalice-Trial Medium Italic'), local('Kalice-Trial-MediumItalic'),
+      url('/fonts/Kalice-Trial-MediumItalic.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-MediumItalic.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-MediumItalic.woff') format('woff'),
+      url('/fonts/Kalice-Trial-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-BoldItalic.eot');
+  src: local('Kalice-Trial Bold Italic'), local('Kalice-Trial-BoldItalic'),
+      url('/fonts/Kalice-Trial-BoldItalic.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-BoldItalic.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-BoldItalic.woff') format('woff'),
+      url('/fonts/Kalice-Trial-BoldItalic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-ExtraBoldItalic.eot');
+  src: local('Kalice-Trial ExtraBold Italic'), local('Kalice-Trial-ExtraBoldItalic'),
+      url('/fonts/Kalice-Trial-ExtraBoldItalic.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-ExtraBoldItalic.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-ExtraBoldItalic.woff') format('woff'),
+      url('/fonts/Kalice-Trial-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalice-Trial';
+  src: url('/fonts/Kalice-Trial-BlackItalic.eot');
+  src: local('Kalice-Trial Black Italic'), local('Kalice-Trial-BlackItalic'),
+      url('/fonts/Kalice-Trial-BlackItalic.eot?#iefix') format('embedded-opentype'),
+      url('/fonts/Kalice-Trial-BlackItalic.woff2') format('woff2'),
+      url('/fonts/Kalice-Trial-BlackItalic.woff') format('woff'),
+      url('/fonts/Kalice-Trial-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Santana Font Family - Body text */
 @font-face {
   font-family: 'Santana';
   src: url('/fonts/Santana.ttf') format('truetype');
@@ -23,17 +146,6 @@
 @font-face {
   font-family: 'Santana';
   src: url('/fonts/Santana-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* PP FRAGMENT Bold - Navigation Font */
-@font-face {
-  font-family: 'PP Fragment';
-  src: url('/fonts/PPFragment-Bold.woff2') format('woff2'),
-       url('/fonts/PPFragment-Bold.woff') format('woff'),
-       url('/fonts/PPFragment-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;

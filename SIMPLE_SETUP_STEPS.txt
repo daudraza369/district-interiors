@@ -1,0 +1,60 @@
+================================================================================
+  SIMPLE SETUP STEPS - PostgreSQL for Strapi
+================================================================================
+
+STEP 1: INSTALL POSTGRESQL
+---------------------------
+1. Open your web browser
+2. Go to: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+3. Click "Download" button for PostgreSQL 15.x (Windows x86-64)
+4. Wait for download to finish (~200MB)
+5. Double-click the downloaded file (postgresql-15.x-windows-x64.exe)
+6. Click "Next" → "Next" → "Next" (keep all defaults)
+7. When asked for PASSWORD:
+   - Enter: postgres
+   - (Or choose your own, but remember it!)
+8. Click "Next" → "Next" → "Finish"
+
+STEP 2: RUN SETUP SCRIPT
+-------------------------
+1. Open PowerShell
+2. Navigate to project:
+   cd d:\district-interiors-bloom-main
+3. Run setup script:
+   .\setup-postgresql.ps1
+4. When asked for password, enter: postgres
+   (Or whatever password you set in Step 1)
+
+STEP 3: START STRAPI
+---------------------
+1. In PowerShell, run:
+   cd apps\cms
+   npm run develop
+2. Wait for it to start (may take 1-2 minutes)
+3. Open browser: http://localhost:1337/admin
+4. Create your admin account
+
+================================================================================
+  THAT'S IT! You're done!
+================================================================================
+
+If you have issues, check:
+- INSTALL_POSTGRESQL.md (detailed guide)
+- QUICK_POSTGRES_SETUP.md (quick reference)
+- LOCAL_FIX_SUMMARY.md (troubleshooting)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

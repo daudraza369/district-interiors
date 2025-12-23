@@ -100,9 +100,9 @@ export function Header({ theme: propTheme }: HeaderProps = {} as HeaderProps) {
               // Extract hex color from background class for inline style if needed
               const getBackgroundColor = () => {
                 if (!isScrolled) return 'transparent';
-                // On Interiors (home) page when scrolled, use #20322A
+                // On Interiors (home) page when scrolled, use #fafaf7
                 if ((pathname === '/' || pathname === '/interiors') && isScrolled) {
-                  return '#20322A'; 
+                  return '#fafaf7'; 
                 }
                 const bgClass = theme.background.solid;
                 // Extract hex from bg-[#hex] format
@@ -142,34 +142,55 @@ export function Header({ theme: propTheme }: HeaderProps = {} as HeaderProps) {
       )}
       style={{
         backgroundColor: isScrolled ? getBackgroundColor() : 'transparent',
-        ...(isDistrictPageScrolled && { backgroundColor: '#20322A' }), // Force #20322A for District page when scrolled
+        ...(isDistrictPageScrolled && { backgroundColor: '#fafaf7' }), // Force #fafaf7 for District page when scrolled
       }}
     >
       <div className="container-luxury px-6 md:px-12 lg:px-20">
         <nav className="flex items-center justify-between">
           {/* DISTRICT Logo */}
-          <Link href="/interiors" className="relative z-[60]">
-            <Image
-              src={logo}
-              alt="District Interiors"
-              height={56}
-              width={200}
-              className={cn(
-                'h-12 md:h-14 w-auto transition-all duration-300',
-                isMobileMenuOpen 
-                  ? 'brightness-100' 
-                  : !isScrolled
-                    ? 'brightness-0 invert' // White logo on transparent background
-                    : 'brightness-100'
-              )}
-              style={{
-                filter: isScrolled && !isMobileMenuOpen
-                  ? 'brightness(0) saturate(100%) invert(88%) sepia(4%) saturate(1800%) hue-rotate(52deg) brightness(118%)' // #E0E8C0 color filter - more accurate
-                  : !isScrolled && !isMobileMenuOpen
-                    ? 'brightness(0) invert(1)' // White logo on transparent background
-                    : undefined
-              }}
-            />
+          <Link href="/interiors" className="relative z-[60] inline-block">
+            {isScrolled && !isMobileMenuOpen ? (
+              <>
+                <Image
+                  src={logo}
+                  alt="District Interiors"
+                  height={56}
+                  width={200}
+                  className="h-12 md:h-14 w-auto transition-all duration-300 opacity-0 pointer-events-none"
+                  aria-hidden="true"
+                />
+                <div
+                  className="absolute inset-0 h-12 md:h-14 w-auto transition-all duration-300"
+                  style={{
+                    backgroundColor: '#445651',
+                    WebkitMaskImage: `url(${typeof logo === 'string' ? logo : logo.src || '/district-logo.png'})`,
+                    maskImage: `url(${typeof logo === 'string' ? logo : logo.src || '/district-logo.png'})`,
+                    WebkitMaskRepeat: 'no-repeat',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskSize: 'contain',
+                    maskSize: 'contain',
+                    WebkitMaskPosition: 'center',
+                    maskPosition: 'center',
+                  }}
+                />
+              </>
+            ) : (
+              <Image
+                src={logo}
+                alt="District Interiors"
+                height={56}
+                width={200}
+                className={cn(
+                  'h-12 md:h-14 w-auto transition-all duration-300',
+                  isMobileMenuOpen 
+                    ? 'brightness-100' 
+                    : 'brightness-0 invert'
+                )}
+                style={{
+                  filter: 'brightness(0) invert(1)', // White logo on transparent background
+                }}
+              />
+            )}
           </Link>
 
           {/* Desktop Navigation - Centered (slightly adjusted left) */}
