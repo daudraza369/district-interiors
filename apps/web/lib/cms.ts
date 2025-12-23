@@ -1,9 +1,11 @@
 /**
- * Typed CMS client for Strapi API
- * Server-side functions use API token, client-side use public API
+ * Typed CMS client - Now using Payload CMS!
+ * Direct database queries with full type safety
  */
 
-import { strapiFetch, strapiPublicFetch } from './strapi';
+// Import Payload functions
+import * as payloadCms from './cms-payload';
+export { getImageUrl, getMediaUrl } from './payload';
 
 // Types
 export interface StrapiEntity<T = any> {
@@ -241,88 +243,10 @@ export interface StatsSection {
   stats: StatItem[];
 }
 
-// Helper to get image URL (handles both Strapi v4 and v5 formats)
-export function getImageUrl(image?: { data?: StrapiEntity<{ url: string }> } | { url?: string } | null): string | null {
-  if (!image) return null;
-  
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  
-  // Strapi v5 format: image is direct object with url property
-  if ('url' in image && image.url) {
-    return `${baseUrl}${image.url}`;
-  }
-  
-  // Strapi v4 format: image.data.attributes.url
-  if ('data' in image && image.data?.attributes?.url) {
-    return `${baseUrl}${image.data.attributes.url}`;
-  }
-  
-  return null;
-}
-
-export function getImageUrlArray(images?: { data?: StrapiEntity<{ url: string }>[] } | { url?: string }[] | null): string[] {
-  if (!images) return [];
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  
-  // Strapi v5 format: array of objects with url property
-  if (Array.isArray(images)) {
-    return images.map(img => 'url' in img && img.url ? `${baseUrl}${img.url}` : '').filter(Boolean);
-  }
-  
-  // Strapi v4 format: images.data array
-  if (images.data && Array.isArray(images.data)) {
-    return images.data.map(img => `${baseUrl}${img.attributes.url}`);
-  }
-  
-  return [];
-}
-
-// Helper to get media URL (for images and videos, handles both v4 and v5)
-export function getMediaUrl(media?: { data?: StrapiEntity<{ url: string; mime?: string }> | StrapiEntity<{ url: string; mime?: string }>[] } | { url?: string; mime?: string } | { url?: string; mime?: string }[] | null): string | null {
-  if (!media) return null;
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-  
-  // Strapi v5 format: direct object or array with url property
-  if (Array.isArray(media)) {
-    return media.length > 0 && 'url' in media[0] && media[0].url ? `${baseUrl}${media[0].url}` : null;
-  }
-  
-  if ('url' in media && media.url) {
-    return `${baseUrl}${media.url}`;
-  }
-  
-  // Strapi v4 format: media.data.attributes.url
-  if ('data' in media && media.data) {
-    if (Array.isArray(media.data)) {
-      return media.data.length > 0 && media.data[0].attributes?.url ? `${baseUrl}${media.data[0].attributes.url}` : null;
-    }
-    if (media.data.attributes?.url) {
-      return `${baseUrl}${media.data.attributes.url}`;
-    }
-  }
-  
-  return null;
-}
-
-// Helper to check if media is video (handles both v4 and v5)
-export function isVideo(media?: { data?: StrapiEntity<{ mime?: string }> | StrapiEntity<{ mime?: string }>[] } | { mime?: string } | { mime?: string }[] | null): boolean {
+// Helper to check if media is video
+export function isVideo(media?: any): boolean {
   if (!media) return false;
-  
-  // Strapi v5 format: direct object with mime property
-  if (Array.isArray(media)) {
-    return media.length > 0 && 'mime' in media[0] ? media[0].mime?.startsWith('video/') || false : false;
-  }
-  
-  if ('mime' in media && media.mime) {
-    return media.mime.startsWith('video/');
-  }
-  
-  // Strapi v4 format: media.data.attributes.mime
-  if ('data' in media && media.data) {
-    const mime = Array.isArray(media.data) ? media.data[0]?.attributes?.mime : media.data.attributes?.mime;
-    return mime?.startsWith('video/') || false;
-  }
-  
+  if (media.mime) return media.mime.startsWith('video/');
   return false;
 }
 
@@ -414,45 +338,9 @@ export async function getTestimonials(): Promise<StrapiEntity<Testimonial>[]> {
   return data;
 }
 
-// Client logos section
-export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection> | null> {
-  try {
-    console.log('[getClientLogos] Fetching client logos section from Strapi...');
-    // Use populate=* to get all fields (row2Logos might not exist yet - that's OK!)
-    const { data } = await strapiPublicFetch<StrapiEntity<ClientLogosSection>>(
-      '/client-logos-section?populate=*&publicationState=live'
-    );
-    
-    if (!data) {
-      console.warn('[getClientLogos] Client Logos Section not found in Strapi. Using fallback values.');
-      return null;
-    }
-    
-    // Ensure row1Logos and row2Logos are arrays (defensive programming)
-    if (data.attributes) {
-      if (!Array.isArray(data.attributes.row1Logos)) {
-        data.attributes.row1Logos = [];
-      }
-      if (!Array.isArray(data.attributes.row2Logos)) {
-        data.attributes.row2Logos = [];
-      }
-    }
-    
-    // Sort logos by displayOrder for both rows (if they exist and have content)
-    if (data.attributes?.row1Logos && Array.isArray(data.attributes.row1Logos) && data.attributes.row1Logos.length > 0) {
-      data.attributes.row1Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-    }
-    if (data.attributes?.row2Logos && Array.isArray(data.attributes.row2Logos) && data.attributes.row2Logos.length > 0) {
-      data.attributes.row2Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-    }
-    
-    console.log('[getClientLogos] Successfully fetched client logos section');
-    return data;
-  } catch (error) {
-    // Gracefully handle errors - frontend will show default logos
-    console.warn('[getClientLogos] Error fetching from Strapi, using fallback values:', error);
-    return null;
-  }
+// Client logos section - Now using Payload!
+export async function getClientLogos() {
+  return payloadCms.getClientLogos();
 }
 
 // Stats
@@ -521,25 +409,9 @@ export async function getHomePageLayout(): Promise<StrapiEntity<HomePageLayout> 
   }
 }
 
-// Why Choose Us
-export async function getWhyChooseUs(): Promise<StrapiEntity<WhyChooseUs> | null> {
-  try {
-    const { data } = await strapiPublicFetch<StrapiEntity<WhyChooseUs>>(
-      '/why-choose-us?populate[features]=*&publicationState=live'
-    );
-    if (!data) {
-      console.warn('Why Choose Us not found in Strapi. Using fallback values.');
-      return null;
-    }
-    // Sort features by displayOrder
-    if (data.attributes.features) {
-      data.attributes.features.sort((a, b) => a.displayOrder - b.displayOrder);
-    }
-    return data;
-  } catch (error) {
-    console.warn('Error fetching Why Choose Us:', error);
-    return null;
-  }
+// Why Choose Us - Now using Payload!
+export async function getWhyChooseUs() {
+  return payloadCms.getWhyChooseUs();
 }
 
 // Collection Preview
@@ -563,25 +435,9 @@ export async function getCollectionPreview(): Promise<StrapiEntity<CollectionPre
   }
 }
 
-// Services Section
-export async function getServicesSection(): Promise<StrapiEntity<ServicesSection> | null> {
-  try {
-    const { data } = await strapiPublicFetch<StrapiEntity<ServicesSection>>(
-      '/services-section?populate[services][populate]=image&publicationState=live'
-    );
-    if (!data) {
-      console.warn('Services Section not found in Strapi. Using fallback values.');
-      return null;
-    }
-    // Sort services by displayOrder
-    if (data.attributes.services) {
-      data.attributes.services.sort((a, b) => a.displayOrder - b.displayOrder);
-    }
-    return data;
-  } catch (error) {
-    console.warn('Error fetching Services Section:', error);
-    return null;
-  }
+// Services Section - Now using Payload!
+export async function getServicesSection() {
+  return payloadCms.getServicesSection();
 }
 
 // About Snapshot
@@ -601,41 +457,13 @@ export async function getAboutSnapshot(): Promise<StrapiEntity<AboutSnapshot> | 
   }
 }
 
-// Dual CTA
-export async function getDualCTA(): Promise<StrapiEntity<DualCTA> | null> {
-  try {
-    const { data } = await strapiPublicFetch<StrapiEntity<DualCTA>>(
-      '/dual-cta?publicationState=live'
-    );
-    if (!data) {
-      console.warn('Dual CTA not found in Strapi. Using fallback values.');
-      return null;
-    }
-    return data;
-  } catch (error) {
-    console.warn('Error fetching Dual CTA:', error);
-    return null;
-  }
+// Dual CTA - Now using Payload!
+export async function getDualCTA() {
+  return payloadCms.getDualCTA();
 }
 
-// Stats Section
-export async function getStatsSection(): Promise<StrapiEntity<StatsSection> | null> {
-  try {
-    const { data } = await strapiPublicFetch<StrapiEntity<StatsSection>>(
-      '/stats-section?populate=stats&publicationState=live'
-    );
-    if (!data) {
-      console.warn('Stats Section not found in Strapi. Using fallback values.');
-      return null;
-    }
-    // Sort stats by displayOrder
-    if (data.attributes.stats) {
-      data.attributes.stats.sort((a, b) => a.displayOrder - b.displayOrder);
-    }
-    return data;
-  } catch (error) {
-    console.warn('Error fetching Stats Section:', error);
-    return null;
-  }
+// Stats Section - Now using Payload!
+export async function getStatsSection() {
+  return payloadCms.getStatsSection();
 }
 

@@ -9,17 +9,28 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 
 // Import collections
+import { Users } from './collections/Users';
+import { Media } from './collections/Media';
 import { HeroSection } from './collections/HeroSection';
 import { ClientLogosSection } from './collections/ClientLogosSection';
+import { WhyChooseUs } from './collections/WhyChooseUs';
+import { ServicesSection } from './collections/ServicesSection';
+import { StatsSection } from './collections/StatsSection';
+import { DualCTA } from './collections/DualCTA';
 
 export default buildConfig({
   admin: {
     user: 'users',
   },
   collections: [
+    Users,
+    Media,
     HeroSection,
     ClientLogosSection,
-    // Add more collections as we create them
+    WhyChooseUs,
+    ServicesSection,
+    StatsSection,
+    DualCTA,
   ],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || process.env.PAYLOAD_SECRET_KEY || 'your-secret-change-this',
