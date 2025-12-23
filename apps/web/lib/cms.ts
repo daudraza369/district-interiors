@@ -418,9 +418,9 @@ export async function getTestimonials(): Promise<StrapiEntity<Testimonial>[]> {
 export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection> | null> {
   try {
     console.log('[getClientLogos] Fetching client logos section from Strapi...');
-    // Use strapiPublicFetch like other sections - this fetches published content without auth
+    // Use populate=* to get all fields (row2Logos might not exist yet - that's OK!)
     const { data } = await strapiPublicFetch<StrapiEntity<ClientLogosSection>>(
-      '/client-logos-section?populate[row1Logos][populate]=*&populate[row2Logos][populate]=*&publicationState=live'
+      '/client-logos-section?populate=*&publicationState=live'
     );
     
     if (!data) {
@@ -428,18 +428,29 @@ export async function getClientLogos(): Promise<StrapiEntity<ClientLogosSection>
       return null;
     }
     
-    // Sort logos by displayOrder for both rows
-    if (data.attributes && data.attributes.row1Logos && Array.isArray(data.attributes.row1Logos)) {
+    // Ensure row1Logos and row2Logos are arrays (defensive programming)
+    if (data.attributes) {
+      if (!Array.isArray(data.attributes.row1Logos)) {
+        data.attributes.row1Logos = [];
+      }
+      if (!Array.isArray(data.attributes.row2Logos)) {
+        data.attributes.row2Logos = [];
+      }
+    }
+    
+    // Sort logos by displayOrder for both rows (if they exist and have content)
+    if (data.attributes?.row1Logos && Array.isArray(data.attributes.row1Logos) && data.attributes.row1Logos.length > 0) {
       data.attributes.row1Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
     }
-    if (data.attributes && data.attributes.row2Logos && Array.isArray(data.attributes.row2Logos)) {
+    if (data.attributes?.row2Logos && Array.isArray(data.attributes.row2Logos) && data.attributes.row2Logos.length > 0) {
       data.attributes.row2Logos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
     }
     
     console.log('[getClientLogos] Successfully fetched client logos section');
     return data;
   } catch (error) {
-    console.error('[getClientLogos] Error:', error);
+    // Gracefully handle errors - frontend will show default logos
+    console.warn('[getClientLogos] Error fetching from Strapi, using fallback values:', error);
     return null;
   }
 }
