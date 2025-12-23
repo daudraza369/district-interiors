@@ -7,7 +7,7 @@
 export function getImageUrl(image: any): string | null {
   if (!image) return null;
   
-  // Handle Strapi format: { data: { attributes: { url: string } } }
+  // Handle Strapi format: { data: { attributes: { url: string } } } or { attributes: { url: string } }
   if (image.data) {
     const data = image.data.attributes || image.data;
     if (data.url) {
@@ -19,6 +19,18 @@ export function getImageUrl(image: any): string | null {
         : (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:3000');
       return `${baseUrl}${data.url}`;
     }
+  }
+  
+  // Handle Strapi format directly: { attributes: { url: string } }
+  if (image.attributes && image.attributes.url) {
+    const url = image.attributes.url;
+    if (url.startsWith('http')) {
+      return url;
+    }
+    const baseUrl = typeof window !== 'undefined' 
+      ? window.location.origin 
+      : (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:3000');
+    return `${baseUrl}${url}`;
   }
   
   // Handle Payload format: { url: string }
