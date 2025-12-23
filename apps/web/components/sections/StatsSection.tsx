@@ -20,7 +20,8 @@ const defaultData: StatsSectionType = {
 };
 
 function StatCard({ stat, index, isVisible }: { stat: StatItem; index: number; isVisible: boolean }) {
-  const count = useCountAnimation(stat.isText ? 0 : stat.value, 2000, isVisible);
+  const numericValue = typeof stat.value === 'number' ? stat.value : (stat.isText ? 0 : parseInt(String(stat.value), 10) || 0);
+  const count = useCountAnimation(stat.isText ? 0 : numericValue, 2000, isVisible);
 
   return (
     <motion.div

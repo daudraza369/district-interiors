@@ -50,7 +50,7 @@ export function DualCTASection({ data }: DualCTASectionProps) {
               {sectionData.leftSubtitle && (
                 <p className="text-slate-moss mb-8">{sectionData.leftSubtitle}</p>
               )}
-              <Link href={sectionData.leftButtonHref}>
+              <Link href={sectionData.leftButtonHref || '#'}>
                 <Button variant="default" className="group/btn">
                   {sectionData.leftButtonLabel}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
@@ -78,7 +78,7 @@ export function DualCTASection({ data }: DualCTASectionProps) {
               {sectionData.rightSubtitle && (
                 <p className="text-slate-moss mb-8">{sectionData.rightSubtitle}</p>
               )}
-              <Link href={sectionData.rightButtonHref}>
+              <Link href={sectionData.rightButtonHref || '#'}>
                 <Button variant="default" className="group/btn">
                   {sectionData.rightButtonLabel}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />

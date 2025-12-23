@@ -130,7 +130,7 @@ export function ServicesSection({ data }: ServicesSectionProps) {
                   <p className="text-slate-moss text-sm leading-relaxed mb-5 flex-grow">
                     {service.description}
                   </p>
-                  <Link href={service.href}>
+                  <Link href={service.href || service.link || '#'}>
                     <Button
                       variant="secondary"
                       size="sm"

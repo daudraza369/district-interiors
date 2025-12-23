@@ -94,9 +94,11 @@ export interface Stat {
 
 export interface StatItem {
   label: string;
-  value: string;
+  value: string | number;
   suffix?: string;
   icon?: string;
+  isText?: boolean;
+  displayOrder?: number;
 }
 
 export interface ShippingOption {
@@ -158,13 +160,16 @@ export interface WhyChooseUs {
   subtitle?: string;
   description?: string;
   benefits?: FeatureItem[];
+  features?: (FeatureItem & { displayOrder?: number })[];
 }
 
 export interface CollectionItem {
-  name: string;
-  slug: string;
+  name?: string;
+  slug?: string;
+  title?: string; // Alias for name
   description?: string;
   image?: any;
+  imageUrl?: string;
   displayOrder: number;
 }
 
@@ -172,6 +177,7 @@ export interface CollectionPreview {
   title: string;
   subtitle?: string;
   items?: CollectionItem[];
+  collections?: CollectionItem[]; // Alternative name used in components
 }
 
 export interface ServicePreviewItem {
@@ -179,7 +185,11 @@ export interface ServicePreviewItem {
   description?: string;
   icon?: string;
   image?: any;
+  imageUrl?: string;
   link?: string;
+  href?: string; // Alternative to link
+  cta?: string; // Call to action text
+  displayOrder?: number;
 }
 
 export interface ServicesSection {
@@ -191,8 +201,11 @@ export interface ServicesSection {
 
 export interface AboutSnapshot {
   title: string;
+  subtitle?: string;
   description?: string;
   image?: any;
+  imageUrl?: string;
+  imageAlt?: string;
   stats?: Stat[];
 }
 
@@ -212,6 +225,15 @@ export interface DualCTA {
     scrollTarget?: string;
   };
   backgroundImage?: any;
+  // Alternative flat structure used in components
+  leftTitle?: string;
+  leftSubtitle?: string;
+  leftButtonLabel?: string;
+  leftButtonHref?: string;
+  rightTitle?: string;
+  rightSubtitle?: string;
+  rightButtonLabel?: string;
+  rightButtonHref?: string;
 }
 
 export interface StatsSection {

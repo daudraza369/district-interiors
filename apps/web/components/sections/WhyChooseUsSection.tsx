@@ -89,7 +89,7 @@ export function WhyChooseUsSection({ data }: WhyChooseUsSectionProps) {
         {/* Feature Cards - Horizontal scroll on mobile, 5 columns on desktop */}
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory lg:grid lg:grid-cols-5 lg:gap-6 lg:overflow-visible lg:pb-0 scrollbar-hide">
           {features.map((feature, index) => {
-            const IconComponent = iconMap[feature.icon] || Leaf;
+            const IconComponent = iconMap[feature.icon || ''] || Leaf;
             return (
               <motion.div
                 key={`${feature.title}-${index}`}
