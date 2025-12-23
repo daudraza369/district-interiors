@@ -6,10 +6,8 @@
  */
 
 // Re-export all types (client-safe)
+// NOTE: Do NOT re-export media utilities here - client components should import directly from media-utils
 export * from './cms-types';
-
-// Re-export client-safe media utilities
-export { getImageUrl, getMediaUrl, isVideo } from './media-utils';
 
 // Server-only imports (dynamic to prevent client bundling)
 let payloadCms: any = null;
